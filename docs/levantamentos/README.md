@@ -1,0 +1,15 @@
+# Levantamentos técnicos
+
+Esta pasta mantém apenas resultados resumidos de engenharia reversa e inventários úteis para futuras implementações.
+
+Os dumps integrais de `javap`, bytecode e demais conteúdos extraídos de componentes IBM/HCL **não são versionados** neste repositório, para evitar redistribuição desnecessária de material proprietário.
+
+O documento consolidado e normativo do projeto permanece em [`../architecture.md`](../architecture.md).
+
+## Conteúdo inicial
+
+- `x20-additional-classes.txt`: classes adicionais identificadas como relevantes no componente Stored Procedure Debugger do ODS.
+- `x20-clientcomposer-methods.txt`: inventário dos métodos públicos/protegidos do `ClientComposer` relacionados ao protocolo PSMD.
+- `x20-request-methods.txt`: inventário dos métodos de `RequestToSessionManager`.
+
+Esses arquivos são referências de levantamento; não constituem API pública nem contrato estável do projeto.
