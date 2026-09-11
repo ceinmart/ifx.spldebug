@@ -1,0 +1,9 @@
+# v0.1.0 | 2026-09-11T12:34:07Z | Criado com auxílio de ChatGPT.
+/bin/classes/
+*.class
+*.jar
+/config/local.properties
+/config/*.local.*
+/config/call.sql
+/bin/outputs/*.private.*
+# bin/outputs/*.log é intencionalmente versionável.

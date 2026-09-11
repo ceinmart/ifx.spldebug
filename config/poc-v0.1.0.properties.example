@@ -1,0 +1,16 @@
+# v0.1.0 | 2026-09-11T12:34:07Z | Criado com auxílio de ChatGPT.
+# Copiar para config/local.properties e preencher com dados reais.
+# Caminhos relativos são resolvidos a partir do diretório atual de execução.
+sm.host=
+sm.port=4554
+client.ip=
+# Obrigatório: pares numéricos tipo:linguagem, separados por vírgula.
+# Falta confirmar o par específico do SPL Informix; não usar T789 como par.
+psmd.supported.types=
+socket.timeout.ms=10000
+run.timeout.seconds=60
+# URL real JCC/DRDA, usuário e arquivo com UMA chamada de rotina de teste existente.
+# Não colocar senha/propriedades de credencial na URL; usar SPLDBG_PASSWORD.
+jdbc.url=
+jdbc.user=
+call.file=config/call.sql

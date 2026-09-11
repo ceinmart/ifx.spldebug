@@ -1,9 +1,11 @@
 # Informix SPL Debugger — Arquitetura Técnica
 
-**Versão:** 1.0  
-**Data:** 2026-09-11  
+**Versão:** 1.1
+
+**Data:** 2026-09-11T12:34:07Z
+
 **Criado por:** ChatGPT / GPT-5.6 Sol  
-**Status:** levantamento consolidado antes da POC mínima
+**Status:** código experimental v0.1.0; testes locais aprovados; integração Informix pendente
 
 ## 1. Objetivo
 
@@ -454,3 +456,87 @@ A estratégia recomendada é exigir que o usuário aponte para cópias legítima
 O levantamento está fechado o suficiente para iniciar uma POC mínima.
 
 A próxima etapa do projeto deve validar o caminho real ponta a ponta antes de qualquer implementação de VS Code.
+
+## 20. Decisões de implementação v0.1.0
+
+O motor Java concentra PSMD, JDBC e ciclo de vida. O console atual é um consumidor
+do motor. Python CLI/TUI e DAP permanecem futuros consumidores independentes.
+Não há dependência do VS Code em Python nem dependência do motor em interface.
+
+O contrato interno tem solicitação identificada, resposta correlacionada e
+eventos assíncronos imutáveis. A ponte futura poderá usar JSON por linha em
+stdin/stdout de um processo Java filho, com logs em stderr. Isso será um
+protocolo próprio versionado, não DAP. A v0.1.0 **não implementa essa ponte**.
+
+Um worker possui a conexão JDBC executora. Outro solicita reports. Cada
+round-trip PSMD usa seu próprio socket com timeout, evitando que o polling
+bloqueie o stream dos comandos. Essa escolha de conexão por round-trip é
+decisão experimental do projeto e precisa de teste contra o manager real.
+O estado central é NEW / READY / RUNNING / STOPPED / COMPLETED / FAILED / CLOSED.
+Uma chamada pode terminar antes do ACK de Run; o ACK não pode sobrescrever
+COMPLETED. Encerramento usa Terminate quando há execução pendente e
+TerminateClient; o worker limpa DEBUGINFO, faz rollback e fecha JDBC.
+Timeout no cleanup é falha explícita, nunca PASS.
+
+A v0.1.0 aceita uma sessão, uma conexão e uma chamada por processo. Usa StepInto
+internamente para pedir a parada inicial após identificar a conexão nos reports
+(se ainda não houve parada) e Run para continuar. A operação
+interativa de stepping fica pendente. No teste automático, continuar cada
+parada recebida até a conclusão ou timeout. Não instalar SPL nem alterar schema.
+
+## 21. Evidências adicionais recuperadas
+
+Foram acessados os arquivos abaixo, fora do repositório. As observações não
+comprovam interoperabilidade com uma instalação Informix real.
+
+| Evidência | Conclusão observada |
+| --- | --- |
+| `xml_protocol.txt`, ClientComposer | `SupportedRoutines` contém `Routine` com atributos numéricos `type` e `language`. |
+| `connection_routine_flow.txt`, SessionClient | Compatibilidade compara pares de tipo/linguagem; lista vazia não é um curinga. |
+| `debug_info.txt`, ClientSessionManager.generateClientId | `clientID` é IP + dois-pontos + identificador P; deve coincidir com os campos I/P de DEBUGINFO. |
+| `psmd_flow.txt`, MessageHeader | Envio big-endian, marcador DB2D, F0=0 no construtor de request. A semântica geral de F0 permanece aberta. |
+| `connection_routine_flow.txt`, ClientUtility | ClientRequest/ConnectionRequest usam tipo 25; SendClientCommands usa tipo 20. |
+| `connection_routine_flow.txt`, SessionClientThread/SessionClient | ConnectionRequest antes de EnterRoutine encontra conexão inexistente e retorna -120. Solicitar StepInto só após observar a conexão nos reports. |
+| `xml_protocol.txt`, ClientComposer | RecvClientReports usa clientID e timeout=2000. TerminateClient usa clientID. |
+| `psmd_flow.txt`, ClientUtility.readReply | Resposta XML possui rc no primeiro nó filho. A POC exige PSMDReply/Reply com rc=0. |
+| `reports.txt`, PSMDTokens | Nomes observados: AtLine, AtBreak, AtBreakPt, AtException, RoutineText, LineMap. AtBreakpoint é nome conceitual/classe, não o token usado nesta POC. |
+
+O par específico para SPL Informix **ainda não foi encontrado nos trechos
+inspecionados**. `T789` do DEBUGINFO não permite deduzi-lo. O programa exige
+`psmd.supported.types` e recusa configuração vazia. Confirmar o valor por
+registro do plugin de rotinas/RoutineService do ODS ou captura real do bootstrap;
+não testar números por tentativa e erro. A listagem de métodos não basta.
+
+## 22. Fonte SPL: visualização, sem edição
+
+A fonte futura deverá ser associada à identidade exata da rotina e a um mapa
+entre posição do runtime e linha exibida. Não assumir que rid PSMD seja procid,
+nem que seqno ou posição no arquivo coincida automaticamente com a linha PSMD.
+
+Origens planejadas:
+
+1. Conteúdo do runtime, se RoutineText/LineMap forem efetivamente recebidos e
+   seus formatos forem confirmados. Hoje há evidência dos tokens, não garantia
+   de que o Informix forneça o fonte por esse caminho.
+2. Catálogo do banco: SYSPROCBODY armazena texto de criação sob datakey T,
+   identificado por procid e seqno. Resolver sobrecarga/schema/assinatura antes
+   de recuperar, preservar texto e verificar o mapeamento de linhas.
+3. Arquivo local indicado explicitamente, somente leitura, com correspondência
+   de versão validada pelo usuário e mapeamento conhecido.
+
+Fonte oficial para o catálogo: [HCL Informix 14.10 — SYSPROCBODY](https://help.hcl-software.com/hclinformix/1410/sqr/ids_sqr_051.html).
+A implementação de SOURCE_GET e SOURCE_MAP é futura. Não criar editor,
+invocação de Vim/Nano ou recompilação por consequência dessa funcionalidade.
+
+## 23. Pendências para validar ponta a ponta
+
+- Confirmar par type/language e disponibilidade/versões do JCC e manager.
+- Executar probe contra db2dbgm.jar; confirmar duração e comportamento das conexões.
+- Executar chamada de rotina de teste fornecida pelo mantenedor em banco com logging.
+- Confirmar parada inicial por StepInto, formato/envelope dos reports, correlação,
+  Run e limpeza. Parser recusa respostas incompatíveis explicitamente.
+- Conferir resultado e eventuais timeouts no encerramento, inclusive interrupção.
+- Somente depois habilitar os comandos pendentes e iniciar ponte Python/DAP.
+
+Os scripts e a evidência local ficam descritos em `poc-v0.1.0.md`; o catálogo
+completo do escopo conhecido do projeto fica em `commands.md` e `Commands.java`.

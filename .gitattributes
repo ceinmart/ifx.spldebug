@@ -1,0 +1,5 @@
+# v0.1.0 | 2026-09-11T12:34:07Z | Criado com auxílio de ChatGPT.
+*.sh text eol=lf
+*.java text eol=lf
+*.md text eol=lf
+*.properties* text eol=lf

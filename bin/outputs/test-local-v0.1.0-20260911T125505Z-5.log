@@ -1,0 +1,64 @@
+spldbg_version=0.1.0 mode=test-local utc=2026-09-11T12:55:05Z
+83d0798c866743e03e7a53fa81dee50d8974d573
+worktree_dirty=yes
+70dc1dae98ea39ed444b6ac264c3e0dce5b0dd3f3b79e945d1309dfb79c02e81  src/main/java/ifx/spldebug/Commands.java
+1d46657cafbbc3416fbc42b98f1a39ffc48f61dd81631014abf44f6dd6a2e5e8  src/main/java/ifx/spldebug/Config.java
+c02b0e65d38eb6298653023720d022f80f8b2512ec9afcf2c2b8982c57510f53  src/main/java/ifx/spldebug/Engine.java
+baaa8b48c9f40a504dcd96d86157dc12665e8e9245c3332ea45deb38823684c7  src/main/java/ifx/spldebug/Main.java
+4177cae6402581b934fa86eae7a4e2b41bd2a9ed7eaf874dc144d23cd1047179  src/main/java/ifx/spldebug/Psmd.java
+1bf3b305e54f8c1cf9f88f33399e6e36d277f310134c3b3b3aab660cd60d46d0  src/test/java/ifx/spldebug/ProtocolTest.java
+spldbg_version=0.1.0 mode=build utc=2026-09-11T12:55:05Z
+83d0798c866743e03e7a53fa81dee50d8974d573
+worktree_dirty=yes
+70dc1dae98ea39ed444b6ac264c3e0dce5b0dd3f3b79e945d1309dfb79c02e81  src/main/java/ifx/spldebug/Commands.java
+1d46657cafbbc3416fbc42b98f1a39ffc48f61dd81631014abf44f6dd6a2e5e8  src/main/java/ifx/spldebug/Config.java
+c02b0e65d38eb6298653023720d022f80f8b2512ec9afcf2c2b8982c57510f53  src/main/java/ifx/spldebug/Engine.java
+baaa8b48c9f40a504dcd96d86157dc12665e8e9245c3332ea45deb38823684c7  src/main/java/ifx/spldebug/Main.java
+4177cae6402581b934fa86eae7a4e2b41bd2a9ed7eaf874dc144d23cd1047179  src/main/java/ifx/spldebug/Psmd.java
+1bf3b305e54f8c1cf9f88f33399e6e36d277f310134c3b3b3aab660cd60d46d0  src/test/java/ifx/spldebug/ProtocolTest.java
+openjdk version "17.0.20" 2026-07-21
+OpenJDK Runtime Environment (build 17.0.20+8-1-24.04-Ubuntu)
+OpenJDK 64-Bit Server VM (build 17.0.20+8-1-24.04-Ubuntu, mixed mode, sharing)
+javac 17.0.20
+PASS BUILD
+exit_code=0 log_exit_code=0
+Output: /workspace/scratch/c78a65267bd4/ifx.spldebug/bin/outputs/build-v0.1.0-20260911T125505Z-18.log
+PASS LOCAL_PROTOCOL checks=48; Informix/JCC não executados
+command	status	parameters
+CAPABILITIES	IMPLEMENTED_EXPERIMENTAL	
+STATUS	IMPLEMENTED_EXPERIMENTAL	
+INITIALIZE	IMPLEMENTED_EXPERIMENTAL	config
+EXECUTE	IMPLEMENTED_EXPERIMENTAL	call
+CONTINUE	IMPLEMENTED_EXPERIMENTAL	
+DISCONNECT	IMPLEMENTED_EXPERIMENTAL	
+PAUSE	PENDING	connectionID
+STEP_INTO	PENDING	connectionID
+STEP_OVER	PENDING	connectionID
+STEP_RETURN	PENDING	connectionID
+STEP_OUT	CONTRACT_UNKNOWN	connectionID
+RUN_TO_LINE	PENDING	connectionID,routineID,line
+END	CONTRACT_UNKNOWN	connectionID
+TERMINATE	PENDING	connectionID
+BREAKPOINT_ADD_LINE	PENDING	routineID,line,enabled,hitMode,hitCount
+BREAKPOINT_ADD_VARIABLE	PENDING	routineID,variable,condition,hitMode,hitCount
+BREAKPOINT_REMOVE	PENDING	routineID,breakpointID
+BREAKPOINT_REMOVE_ALL	PENDING	routineID
+BREAKPOINT_ENABLE	PENDING	routineID,breakpointID
+BREAKPOINT_DISABLE	PENDING	routineID,breakpointID
+BREAKPOINT_LIST	PENDING	routineID
+STACK	PENDING	connectionID
+FRAME_SELECT	PENDING	frameID
+VARIABLES	PENDING	frameID
+VARIABLE_GET	PENDING	frameID,variableID
+VARIABLE_SET	PENDING	frameID,variableID,value,type
+VARIABLE_SET_LENGTH	PENDING	variableID,length
+SOURCE_GET	PENDING	routineID,origin,path
+SOURCE_MAP	CONTRACT_UNKNOWN	routineID
+ROUTINES	PENDING	connectionID
+ROUTINE_ADD	CONTRACT_UNKNOWN	routineID,options
+OPTIONS	PENDING	sessionTimeout,maxVarReportSize
+TRACE	CONTRACT_UNKNOWN	scope,mode
+TRACE_MODE	CONTRACT_UNKNOWN	LineByLine,Variables,Statements,Timings
+MANAGER_PING	PENDING	
+MANAGER_END	PENDING	
+exit_code=0 log_exit_code=0
