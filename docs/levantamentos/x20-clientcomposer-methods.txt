@@ -1,0 +1,35 @@
+# Levantamento x20 - ClientComposer
+# Versao: 1.0
+# Data: 2026-09-11
+# Gerado com auxilio de ChatGPT / GPT-5.6 Sol
+
+public com.ibm.debug.spd.internal.psmd.ClientComposer();
+public static byte[] composeReqExitManager();
+public static byte[] composeReqInitializeClient(java.lang.String, java.util.ArrayList<java.lang.String>);
+public static byte[] composeReqTerminateClient(java.lang.String);
+public static byte[] composeReqRecvReports(java.lang.String);
+public static byte[] composeSendClientCommands(java.lang.String, java.lang.String, java.lang.String, java.lang.String);
+protected static void addSendClientRequestHeader(java.lang.StringBuffer);
+protected static void addSendClientRequestFooter(java.lang.StringBuffer);
+public static java.lang.String composeConnectionRequest(java.lang.String, java.lang.String, java.lang.String, java.lang.String, int);
+public static java.lang.String composeConnectionRequest(java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, java.lang.String);
+public static java.lang.String composeClientRequest(java.lang.String, java.lang.String, java.lang.String);
+public static java.lang.String composeRtnRequest_General(java.lang.String, java.lang.String, java.lang.String, java.lang.String);
+public static java.lang.String composeRtnRequest_LinkedJVM(java.lang.String, java.lang.String, java.lang.String, java.lang.String);
+public static java.lang.String composeRtnRequest_GeneralMultiple(java.lang.String, java.lang.String[], java.lang.String[], java.lang.String[]);
+public static java.lang.String composeAddLineBkpt(java.lang.String, java.lang.String, java.lang.String, int, java.lang.String, java.lang.String, java.lang.String);
+private static void addRoutineRequestFooter(java.lang.StringBuffer);
+private static void addRoutineRequestHeader(java.lang.String, java.lang.String, java.lang.StringBuffer);
+public static java.lang.String composeRtnRequest_AddLineBkpts(java.lang.String, java.lang.String, java.util.ArrayList<org.eclipse.debug.core.model.IBreakpoint>);
+public static java.lang.String composeAddVarBkpt(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String);
+public static java.lang.String composeRtnRequest_AddVarBkpts(java.lang.String, java.lang.String, java.util.ArrayList<org.eclipse.debug.core.model.IBreakpoint>);
+public static java.lang.String composeClientCommand_SetVar(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String);
+public static java.lang.String composeClientCommand_SetVar(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String);
+public static java.lang.String composeClientCommand_GetVar(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String);
+public static java.lang.String composeClientCommand_SetLen(java.lang.String, java.lang.String);
+protected static java.lang.String genProperty(java.lang.String, java.lang.String);
+protected static java.lang.String genProperty(java.lang.String, int);
+protected static java.lang.String genProperty(java.lang.String, boolean);
+protected static byte[] getByteInUTF8(java.lang.String);
+private static int getiSeriesAdjustedEngineLineNumber(com.ibm.debug.spd.common.SPDLineBreakpoint);
+private static com.ibm.db.models.db2.DB2Routine getDB2Routine(com.ibm.debug.spd.common.SPDLineBreakpoint);
