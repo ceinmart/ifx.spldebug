@@ -1,0 +1,51 @@
+# Levantamento x20 - classes adicionais relevantes
+# Versao: 1.0
+# Data: 2026-09-11
+# Gerado com auxilio de ChatGPT / GPT-5.6 Sol
+
+com.ibm.debug.spd.internal.actions.DebugSQLXEditor
+com.ibm.debug.spd.internal.actions.RetargettableActionAdapterFactory
+com.ibm.debug.spd.internal.actions.RunToLineRulerAction
+com.ibm.debug.spd.internal.actions.SetVariableLengthAction
+com.ibm.debug.spd.internal.actions.SQLRunToLineAdapter
+com.ibm.debug.spd.internal.core.ClientCommand
+com.ibm.debug.spd.internal.core.ClientRequest
+com.ibm.debug.spd.internal.core.ClientSessionManager
+com.ibm.debug.spd.internal.core.ConnectionModelInfo
+com.ibm.debug.spd.internal.core.RequestToSessionManager
+com.ibm.debug.spd.internal.core.SessionManagerWrapper
+com.ibm.debug.spd.internal.core.SessionManagerWrapperForBuiltinMgr
+com.ibm.debug.spd.internal.core.SessionManagerWrapperForServerMgr
+com.ibm.debug.spd.internal.core.SessionManagerWrapperForStandaloneMgr
+com.ibm.debug.spd.internal.core.SPDMessages
+com.ibm.debug.spd.internal.core.SPDPreferencePage$PortFieldEditor
+com.ibm.debug.spd.internal.core.SPDRowElement
+com.ibm.debug.spd.internal.core.SPDSQLStackFrame
+com.ibm.debug.spd.internal.core.SPDStackFrame
+com.ibm.debug.spd.internal.core.SPDThread
+com.ibm.debug.spd.internal.core.SPDUtils
+com.ibm.debug.spd.internal.core.SPDVariable
+com.ibm.debug.spd.internal.dialogs.SetVariableLengthDialog
+com.ibm.debug.spd.internal.launch.SPDLaunchPreferenceTab
+com.ibm.debug.spd.internal.psmd.ClientComposer
+com.ibm.debug.spd.internal.psmd.ClientUtility
+com.ibm.debug.spd.internal.psmd.MessageHeader
+com.ibm.debug.spd.internal.psmd.PSMDAtBreakpoint
+com.ibm.debug.spd.internal.psmd.PSMDAtException
+com.ibm.debug.spd.internal.psmd.PSMDAtLine
+com.ibm.debug.spd.internal.psmd.PSMDNode
+com.ibm.debug.spd.internal.psmd.PSMDStackFrame
+com.ibm.debug.spd.internal.psmd.PSMDTokens
+com.ibm.debug.spd.internal.psmd.ReportProcessor
+com.ibm.debug.spd.internal.psmd.V82Support
+com.ibm.debug.spd.internal.smgr.PSMDMgrMessageHeader
+com.ibm.debug.spd.internal.smgr.PSMDMgrNode
+com.ibm.debug.spd.internal.smgr.PSMDMgrTokens
+com.ibm.debug.spd.internal.smgr.SessionClient
+com.ibm.debug.spd.internal.smgr.SessionClientProcessorForRecv
+com.ibm.debug.spd.internal.smgr.SessionClientProcessorForReq
+com.ibm.debug.spd.internal.smgr.SessionClientThread
+com.ibm.debug.spd.internal.smgr.SessionClientThread1Req
+com.ibm.debug.spd.internal.smgr.SessionConnection
+com.ibm.debug.spd.internal.smgr.SessionServerThread
+com.ibm.debug.spd.internal.smgr.SessionServerThread1Req
