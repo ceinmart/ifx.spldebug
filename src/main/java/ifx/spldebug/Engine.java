@@ -1,4 +1,4 @@
-/* v0.1.0 | 2026-09-11T12:34:07Z | Criado com auxílio de ChatGPT.
+/* v0.1.1 | 2026-09-11T19:30:37Z | Criado com auxílio de ChatGPT.
  * Núcleo sem terminal: executa JDBC em worker próprio e recebe reports em outro.
  * API interna estruturada para console, futura ponte Python e futuro DAP.
  */
@@ -54,7 +54,7 @@ public final class Engine implements AutoCloseable {
                 case CAPABILITIES:
                     Map<String,String> catalog=new LinkedHashMap<>();
                     for(Command c:Command.values()) catalog.put(c.name(),c.status+";"+c.parameters);
-                    return new Response(request.id,true,"CATALOG_V0.1.0",catalog);
+                    return new Response(request.id,true,"CATALOG_V0.1.1",catalog);
                 case STATUS:
                     Map<String,String> details=new LinkedHashMap<>();
                     details.put("clientID",clientID); details.put("connectionID",connectionID);

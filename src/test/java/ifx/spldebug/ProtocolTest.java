@@ -1,10 +1,11 @@
-/* v0.1.0 | 2026-09-11T12:34:07Z | Criado com auxílio de ChatGPT.
+/* v0.1.1 | 2026-09-11T19:30:37Z | Criado com auxílio de ChatGPT.
  * Testes locais com vetores sintéticos declarados. Não simulam validação Informix.
  */
 package ifx.spldebug;
 import java.io.*;
 import java.nio.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
 import java.net.*;
 import java.util.concurrent.*;
 import java.util.*;
@@ -40,6 +41,16 @@ public final class ProtocolTest {
         Document init=Psmd.parse(Psmd.initialize("a&\"b","1:2,3:4").getBytes(StandardCharsets.UTF_8));
         check(((Element)init.getElementsByTagName("InitializeClient").item(0)).getAttribute("clientID").equals("a&\"b"),"XML escaping");
         check(init.getElementsByTagName("Routine").getLength()==2,"supported pair list");
+        String observed="<PSMDRequest><InitializeClient><SupportedRoutines><Routine language='2' type=\"1\"/>"+
+                "<Routine type='3' language=\"4\"/></SupportedRoutines></InitializeClient></PSMDRequest>";
+        check(SupportedTypes.discover(Psmd.encode(10,observed)).equals("1:2,3:4"),"discover supported types from framed XML");
+        check(SupportedTypes.normalize("1:2, 1:2,3:4").equals("1:2,3:4"),"normalize supported types");
+        Path hex=Files.createTempFile("spldbg-supported-types-",".hex");
+        try {
+            Files.write(hex,Arrays.asList("41:42", "4344"),StandardCharsets.US_ASCII);
+            check(Arrays.equals(SupportedTypesDiscovery.decodeHex(hex),new byte[]{65,66,67,68}),"decode tshark payload hex");
+        } finally { Files.deleteIfExists(hex); }
+        rejects(() -> SupportedTypes.discover("<Routine type='1' language='2'/>".getBytes(StandardCharsets.US_ASCII)),"routine outside SupportedRoutines");
         rejects(() -> Psmd.initialize("x",""),"unknown supported types");
         rejects(() -> Psmd.initialize("x","SQL"),"non-numeric pair");
         rejects(() -> Psmd.parse("<!DOCTYPE x [<!ENTITY e SYSTEM 'file:///etc/passwd'>]><x>&e;</x>".getBytes(StandardCharsets.UTF_8)),"external entity");

@@ -1,4 +1,4 @@
-<!-- v0.1.0 | 2026-09-11T12:34:07Z | Criado com auxílio de ChatGPT. -->
+<!-- v0.1.1 | 2026-09-11T19:30:37Z | Criado com auxílio de ChatGPT. -->
 # Catálogo estruturado do debugger
 
 Contrato público do **projeto**, não API IBM. Abrange todos os comandos e
@@ -61,7 +61,7 @@ Status I não significa que o Informix aceitou o comando em teste real.
 | MANAGER_END | nenhum | P | EndManager/tipo 0; nunca usado no cleanup do cliente |
 
 Parâmetros futuros são nomes semânticos, não promessa de formatos aceitos pelo
-servidor. A v0.1.0 ainda usa strings; tipagem de valores/IDs deve evoluir antes
+servidor. A v0.1.1 ainda usa strings; tipagem de valores/IDs deve evoluir antes
 de habilitar edição de variáveis ou suporte a múltiplas conexões.
 O console só aceita comandos sem argumentos nesta fase; EXECUTE é disparado
 pelo modo `--run` e usa a chamada do arquivo de configuração.
@@ -70,7 +70,7 @@ pelo modo `--run` e usa a chamada do arquivo de configuração.
 
 Não expor todas as mensagens do servidor como comandos do usuário.
 
-| Família | Mensagens conhecidas | Uso na v0.1.0 |
+| Família | Mensagens conhecidas | Uso na v0.1.1 |
 | --- | --- | --- |
 | Cliente/manager | EndManager=0, Ping=2, InitializeClient=10, SendClientCommands=20, manager commands=25, RecvClientReports=30, TerminateClient=40 | 10/25/30/40 implementados |
 | Envelopes | ClientRequest, ConnectionRequest, RoutineRequests, SendClientCommands | Dois primeiros implementados; demais pendentes |

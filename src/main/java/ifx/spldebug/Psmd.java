@@ -1,4 +1,4 @@
-/* v0.1.0 | 2026-09-11T12:34:07Z | Criado com auxílio de ChatGPT.
+/* v0.1.1 | 2026-09-11T19:30:37Z | Criado com auxílio de ChatGPT.
  * Implementação própria de framing e XML baseada nos contratos observados x18/x20.
  */
 package ifx.spldebug;
@@ -22,8 +22,7 @@ public final class Psmd {
     }
     public static String initialize(String id, String pairs) {
         StringBuilder routines=new StringBuilder();
-        for(String pair:pairs.split(",",-1)) {
-            if(!pair.matches("[0-9]+:[0-9]+")) throw new IllegalArgumentException("PSMD_TYPES_REQUIRED_TYPE_LANGUAGE");
+        for(String pair:SupportedTypes.normalize(pairs).split(",")) {
             String[] p=pair.split(":");
             routines.append("<Routine type=\"").append(p[0]).append("\" language=\"").append(p[1]).append("\"/>");
         }
