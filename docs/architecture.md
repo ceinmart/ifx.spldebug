@@ -1,8 +1,8 @@
 # Informix SPL Debugger — Arquitetura Técnica
 
-**Versão:** 1.2
+**Versão:** 1.3
 
-**Data:** 2026-09-11T19:30:37Z
+**Data:** 2026-09-13T19:22:10Z
 
 **Criado por:** ChatGPT / GPT-5.6 Sol  
 **Status:** código experimental v0.1.1; testes locais aprovados; integração Informix pendente
@@ -508,14 +508,17 @@ todos os elementos `<Routine type="T" language="L"/>` realmente anunciados pelo
 cliente: `T:L`, separados por vírgula. É uma lista de capacidades do cliente,
 não o tipo inferido a partir do nome da procedure.
 
-A fonte preferencial é uma captura autorizada do `InitializeClient` de um ODS
-compatível com o ambiente. `discover-supported-types-v0.1.1.sh` recebe payload
-hexadecimal produzido por `tshark` ou um XML/log bruto, extrai apenas os pares e
-gera relatório seguro em `bin/outputs/`. O arquivo capturado não entra no Git.
-Como alternativa estática, localizar o bundle que contém a implementação de
-`RoutineService`, inspecionar `getRoutineType(ArrayList)` e o registro de extensões
-Eclipse consultado por ele. A listagem de métodos e os callers recuperados não
-bastam. O procedimento completo fica em `poc-v0.1.1.md`.
+O mantenedor não possui ODS executável, mas conserva os JARs do ODS 2.2.1.1 que
+originaram os levantamentos. A coleta x21 é, portanto, o caminho atual: localiza
+o bundle que contém `RoutineService`, inspeciona `getRoutineType(ArrayList)`,
+classes relacionadas e registros de extensões Eclipse. A listagem de métodos e
+os callers recuperados não bastam. O procedimento fica em
+`levantamentos/x21-supported-routines.md`.
+
+Uma captura autorizada de `InitializeClient` continua sendo evidência válida se
+um ambiente executável surgir futuramente. O extrator
+`discover-supported-types-v0.1.1.sh` permanece disponível, mas não é requisito
+para a coleta atual.
 
 ## 22. Fonte SPL: visualização, sem edição
 

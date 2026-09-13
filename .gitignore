@@ -1,4 +1,4 @@
-# v0.1.1 | 2026-09-11T19:30:37Z | Criado com auxílio de ChatGPT.
+# v0.1.2 | 2026-09-13T19:22:10Z | Atualizado com auxílio de ChatGPT.
 /bin/classes/
 *.class
 *.jar
@@ -6,4 +6,6 @@
 /config/*.local.*
 /config/call.sql
 /bin/outputs/*.private.*
+/bin/outputs/*-private.tar.gz
+/x21-private.tar.gz
 # bin/outputs/*.log é intencionalmente versionável.

@@ -1,0 +1,13 @@
+spldbg_version=0.1.1 mode=x21-self-test utc=2026-09-13T19:23:40Z
+c1a6f6068714003a8b42cc3b052c89f55d650ac6
+worktree_dirty=yes
+d1e7d1823bcfdd90f5516d0aecc1d81dc7583c5ddfe801473e7f1887e3634144  src/main/java/ifx/spldebug/Commands.java
+b9907723852dbd9150ef17544a97799617da47becfa972f6297f29c2b6f4251a  src/main/java/ifx/spldebug/Config.java
+9642bb404e8f5c6fd7c1611379936243d3bbd52350aa311de62c34b64b1566f1  src/main/java/ifx/spldebug/Engine.java
+dfc39890534e769447cd22e4317428ce82c3fb57f83f91fa23861ef020081ccd  src/main/java/ifx/spldebug/Main.java
+02b1c94756a3219a7b0034b5a4bdc80db04ffd88af120188575fb68684ca2c9e  src/main/java/ifx/spldebug/Psmd.java
+de4b6f3457d4d62c7122784b3dc9cf3e2f6d7c66adebda03df604f9379e8d180  src/main/java/ifx/spldebug/SupportedTypes.java
+9263ddfff8be2a3a1de57e9572ad1333920c2e6155ede5413b39543deeec374b  src/main/java/ifx/spldebug/SupportedTypesDiscovery.java
+9dfcef29f85f2cfc4200a4ac91eaa3a39f5c3e84cfeb3279a972ca40792fccbb  src/test/java/ifx/spldebug/ProtocolTest.java
+PASS X21_SELF_TEST
+exit_code=0 log_exit_code=0

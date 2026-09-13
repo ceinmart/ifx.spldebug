@@ -1,11 +1,12 @@
-<!-- v0.1.1 | 2026-09-11T19:30:37Z | Criado com auxílio de ChatGPT. -->
+<!-- v0.1.1-doc2 | 2026-09-13T19:22:10Z | Atualizado com auxílio de ChatGPT. -->
 # Executar a POC v0.1.1
 
 ## Estado real
 
 Código experimental implementado e testado localmente, sem integração Informix
 executada. O par tipo/linguagem de SPL para `SupportedRoutines` ainda precisa ser
-observado no ambiente. A v0.1.1 inclui um procedimento reproduzível para obtê-lo.
+observado no ambiente. Como o mantenedor não possui ODS executável, a coleta
+atual é estática sobre os JARs preservados do ODS 2.2.1.1.
 Sem esse valor, `--probe` e `--run` recusam a configuração antes de abrir sockets.
 
 ## Compilação e teste local
@@ -51,66 +52,34 @@ mas não trazem a implementação de `RoutineService.getRoutineType(...)` nem um
 bootstrap real com os números. Por isso esta versão não define um número por
 suposição.
 
-## Como descobrir o valor no ambiente
+## Como descobrir o valor sem executar o ODS
 
-O método preferencial é observar uma inicialização feita pelo ODS compatível com
-o Informix alvo. O PSMD estudado é TCP sem TLS e o XML aparece no payload. Faça
-a captura somente em ambiente autorizado e durante uma sessão de teste.
-
-1. Descubra a porta do Session Manager usada pelo ODS. Os padrões observados são
-   4554 (standalone) e 4555 (builtin), mas confirme no processo/configuração.
-2. Inicie a captura de `tcp.payload` com `tshark`, substituindo `PORTA`:
-
-   ```bash
-   sudo tshark -i any -f 'tcp port PORTA' -l -T fields -e tcp.payload \
-     > /tmp/psmd-payload.hex
-   ```
-
-3. No ODS, inicie uma única depuração SPL até a sessão conectar. Pare o `tshark`
-   com Ctrl+C.
-4. Extraia somente os pares, sem commitar a captura:
-
-   ```bash
-   bash bin/discover-supported-types-v0.1.1.sh \
-     --tshark-hex /tmp/psmd-payload.hex
-   ```
-
-5. Copie literalmente a linha `psmd.supported.types=...` exibida para
-   `config/local.properties`.
-6. Apague `/tmp/psmd-payload.hex` depois da conferência. O arquivo pode conter
-   IDs, nomes e outras informações do protocolo e não deve entrar no Git.
-
-Se já existir um log autorizado que contenha o XML completo de
-`SupportedRoutines`, use `--raw ARQUIVO`. O extrator só resolve o valor quando
-encontra o bloco e seus dois atributos numéricos. Ausência do bloco retorna
-`SUPPORTED_ROUTINES_NOT_FOUND` e código diferente de zero; nesse caso não
-preencha a propriedade.
-
-O script cria em `bin/outputs/` um relatório `supported-types-discovery-*.log`
-que contém o valor derivado, versão e checksums do código, mas não contém a
-captura. Revise esse relatório antes de commitá-lo. A captura original permanece
-fora do repositório.
-
-### Alternativa quando o ODS não pode executar
-
-Localize primeiro qual bundle contém a implementação, sem assumir que seja
-`db2dbgm.jar`:
+Os resultados x18/x20 existentes contêm chamadas para
+`RoutineService.getRoutineType(ArrayList)`, mas não o corpo desse método. Execute
+a nova coleta estática nos JARs preservados:
 
 ```bash
-find "$ODS_HOME/plugins" -type f -name '*.jar' -print0 | while IFS= read -r -d '' jarfile; do
-    if jar tf "$jarfile" | grep -q '^com/ibm/debug/spd/internal/core/RoutineService.class$'; then
-        printf '%s\n' "$jarfile"
-    fi
-done
+cd /home/informix/tmp/spl.debug
+bash /CAMINHO/DO/REPOSITORIO/bin/x21.sh
 ```
 
-`db2dbgm.jar` não substitui esse bundle: ele implementa o Session Manager. Para
-obter o valor estaticamente é necessário inspecionar o corpo de
-`RoutineService.getRoutineType(ArrayList)` e, se ele consultar o registro de
-extensões Eclipse, também as extensões registradas pela instalação. Uma simples
-lista de métodos ou os callers já coletados não resolve o par. Não commitar JAR,
-classe, bytecode integral ou código decompilado. Se essa for a única opção,
-registrar somente a conclusão `type:language` e a identificação/hash do bundle.
+O script procura `RoutineService.class` em todos os JARs, coleta seu bytecode,
+classes candidatas e registros Eclipse, e tenta derivar os pares adicionados
+diretamente pelo método. Consulte o procedimento e os cuidados em
+[`levantamentos/x21-supported-routines.md`](levantamentos/x21-supported-routines.md).
+
+Se `x21/x21-summary.txt` contiver `psmd.supported.types=...`, o valor ainda deve
+ser revisado contra a coleta antes de ser usado. Se ficar vazio, não testar
+números: será preciso analisar `x21-private.tar.gz`, que não pode ser commitado.
+
+`db2dbgm.jar` não substitui os bundles do ODS: ele implementa o Session Manager.
+Uma listagem de métodos ou os callers já coletados também não resolve o par.
+
+### Captura de bootstrap
+
+O extrator `discover-supported-types-v0.1.1.sh` permanece disponível para um
+futuro XML/captura real de `InitializeClient`, mas não é o caminho atual porque
+o mantenedor não possui um ODS executável.
 
 ## Preparar integração
 
@@ -158,7 +127,9 @@ automático espera parada, envia Continue, espera conclusão e executa cleanup.
 PASS exige a sequência completa; timeout, erro remoto, configuração ausente ou
 cleanup incompleto retornam erro.
 
-Cada script grava saída em `bin/outputs/`. Para a próxima análise, commite os
-logs revisados `build-*.log`, `supported-types-discovery-*.log` e
-`test-local-*.log`; depois execute e commite `run-*.log`. Não anexe novamente
-outputs que já estejam no branch.
+Cada script da POC grava saída em `bin/outputs/`. Para a etapa atual, execute
+primeiro `test-x21.sh` e `x21.sh`. Commite o log `x21-self-test-*.log` e uma cópia
+revisada de `x21-summary.txt`. O arquivo `x21-private.tar.gz` só deve ser anexado
+à conversa se o resumo não resolver o par; nunca deve entrar no Git. Depois da
+resolução, execute e commite os logs `build-*.log`, `test-local-*.log` e
+`run-*.log`. Não envie novamente outputs já presentes no branch.

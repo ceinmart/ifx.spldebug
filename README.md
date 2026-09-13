@@ -1,6 +1,6 @@
 # ifx.spldebug
 
-<!-- v0.1.1 | 2026-09-11T19:30:37Z | Atualizado com auxílio de ChatGPT. -->
+<!-- v0.1.2-doc | 2026-09-13T19:22:10Z | Atualizado com auxílio de ChatGPT. -->
 
 `ifx.spldebug` é um projeto experimental para construir um debugger interativo de **SPL do IBM/HCL Informix**, inicialmente como cliente texto e, após validação do protocolo, como base para integração com o VS Code por meio de um Debug Adapter.
 
@@ -32,10 +32,12 @@ Motor Java, console texto e scripts estão implementados. Compilação e testes
 locais foram executados com OpenJDK 17, gerando classes compatíveis com Java 8.
 **Ainda não foi executada integração com Informix/JCC.** O par numérico
 `psmd.supported.types` do SPL Informix continua pendente de confirmação no
-ambiente real; não há valor padrão inventado. A v0.1.1 inclui captura e extração
-reproduzíveis desse valor. Sem ele, a integração para no preflight.
+ambiente real; não há valor padrão inventado. Como não existe um ODS executável,
+a coleta `x21` procura o valor diretamente nos JARs já levantados. Sem ele, a
+integração para no preflight.
 
 - [Compilar, descobrir SupportedRoutines e testar](docs/poc-v0.1.1.md)
+- [Coleta estática x21 nos JARs do ODS](docs/levantamentos/x21-supported-routines.md)
 - [Catálogo de comandos e pendências](docs/commands.md)
 - [Resultados versionáveis](bin/outputs/README.md)
 
