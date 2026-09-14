@@ -1,7 +1,7 @@
 <!--
-Versão: v1.0.1
+Versão: v1.0.2
 Criado em: 2026-09-14T18:51:29Z
-Atualizado em: 2026-09-14T18:55:10Z
+Atualizado em: 2026-09-14T19:28:10Z
 Criado por: Codex (ChatGPT)
 Projeto: ifx.spldebug
 Finalidade: documentar a coleta das implementações de IRoutineService.
@@ -27,6 +27,9 @@ bash bin/test-x22.sh
 
 O resultado esperado é `PASS X22_SELF_TEST`. O teste usa somente JAR sintético;
 os pares `1:2,3:4` validam o coletor e não representam o Informix.
+
+A versão v1.0.2 corrige a publicação truncada da v1.0.1. Antes da execução sobre
+os JARs reais, `bash -n bin/x22.sh bin/test-x22.sh` deve terminar sem mensagens.
 
 ## Executar sobre o ODS preservado
 
