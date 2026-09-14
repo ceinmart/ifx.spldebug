@@ -1,6 +1,7 @@
 <!--
-Versão: v1.0.0
+Versão: v1.0.1
 Criado em: 2026-09-14T18:51:29Z
+Atualizado em: 2026-09-14T18:55:10Z
 Criado por: Codex (ChatGPT)
 Projeto: ifx.spldebug
 Finalidade: documentar a coleta das implementações de IRoutineService.
@@ -50,7 +51,7 @@ O x22:
 
 ## Resultados
 
-- `x22/x22-summary.txt`: resumo sanitizado, apropriado para revisão;
+- `x22/x22-summary.txt`: resumo sanitizado com JAR, classe provedora e associação de cada par, apropriado para revisão;
 - `x22-private.tar.gz`: bytecode e índices completos, fora do Git.
 
 Somente use `psmd.supported.types` quando o resumo apresentar
