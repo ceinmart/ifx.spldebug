@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Script: x22.sh
-# Versão: v1.0.2
+# Versão: v1.1.0
 # Criado em: 2026-09-14T18:51:29Z
-# Atualizado em: 2026-09-14T19:28:10Z
+# Atualizado em: 2026-09-14T19:49:58Z
 # Criado por: Codex (ChatGPT)
 # Projeto: ifx.spldebug
 # Finalidade: localizar implementações de IRoutineService registradas nos
@@ -15,7 +15,7 @@
 
 set -euo pipefail
 
-SCRIPT_VERSION="1.0.2"
+SCRIPT_VERSION="1.1.0"
 ODS_ROOT="$PWD/ods-2.2.1.1"
 X21_OUTPUT="$PWD/x21"
 OUTPUT_DIR="$PWD/x22"
@@ -207,13 +207,19 @@ _main() {
             printf '%s|%s|%s\n' "$provider_jar" "$provider_class" "$pair" >> "$TEMP_DIR/pair-evidence"
         done < <(_derive_pairs "$OUTPUT_DIR/$relative")
     done < "$OUTPUT_DIR/providers.services.tsv"
-    awk -F '|' '!seen[$3]++ { print $3 }' "$TEMP_DIR/pair-evidence" > "$TEMP_DIR/pairs.unique"
+    awk -F '|' '!seen[$3]++ { print $3 }' "$TEMP_DIR/pair-evidence" > "$TEMP_DIR/all-pairs.unique"
+    awk -F '|' '
+        $1 ~ /^com\.ibm\.debug\.spd\.spl_/ &&
+        $2 == "com.ibm.debug.spd.spl.internal.core.SPLRoutineService" &&
+        !seen[$3]++ { print $3 }
+    ' "$TEMP_DIR/pair-evidence" > "$TEMP_DIR/spl-pairs.unique"
 
-    local pairs providers evidence status
-    pairs=$(paste -sd, "$TEMP_DIR/pairs.unique")
+    local all_pairs spl_pairs providers evidence status
+    all_pairs=$(paste -sd, "$TEMP_DIR/all-pairs.unique")
+    spl_pairs=$(paste -sd, "$TEMP_DIR/spl-pairs.unique")
     providers=$(awk -F '\t' '{ print $1 "|" $2 }' "$OUTPUT_DIR/providers.services.tsv" | paste -sd,)
     evidence=$(paste -sd, "$TEMP_DIR/pair-evidence")
-    if [[ -n "$pairs" ]]; then
+    if [[ -n "$spl_pairs" ]]; then
         status="RESOLVED_STATIC_REVIEW"
     elif [[ -s "$OUTPUT_DIR/providers.services.tsv" ]]; then
         status="PROVIDERS_FOUND_UNRESOLVED"
@@ -232,9 +238,10 @@ _main() {
         printf 'provider_class_owners=%s\n' "$(wc -l < "$OUTPUT_DIR/providers.owners.tsv")"
         printf 'routine_service_implementations=%s\n' "$(wc -l < "$OUTPUT_DIR/providers.services.tsv")"
         printf 'routine_service_providers=%s\n' "$providers"
-        printf 'routine_service_pairs=%s\n' "$pairs"
+        printf 'routine_service_pairs=%s\n' "$all_pairs"
         printf 'routine_service_pair_evidence=%s\n' "$evidence"
-        printf 'psmd.supported.types=%s\n' "$pairs"
+        printf 'spl_routine_service_pairs=%s\n' "$spl_pairs"
+        printf 'psmd.supported.types=%s\n' "$spl_pairs"
         printf '%s\n' 'review_required=yes'
         printf '%s\n' 'private_archive_must_not_be_committed=yes'
     } > "$OUTPUT_DIR/x22-summary.txt"

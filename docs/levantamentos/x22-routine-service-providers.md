@@ -1,7 +1,7 @@
 <!--
-Versão: v1.0.2
+Versão: v1.1.0
 Criado em: 2026-09-14T18:51:29Z
-Atualizado em: 2026-09-14T19:28:10Z
+Atualizado em: 2026-09-14T19:49:58Z
 Criado por: Codex (ChatGPT)
 Projeto: ifx.spldebug
 Finalidade: documentar a coleta das implementações de IRoutineService.
@@ -25,8 +25,8 @@ cd ~/ifx.spldebug
 bash bin/test-x22.sh
 ```
 
-O resultado esperado é `PASS X22_SELF_TEST`. O teste usa somente JAR sintético;
-os pares `1:2,3:4` validam o coletor e não representam o Informix.
+O resultado esperado é `PASS X22_SELF_TEST`. O teste usa provedores sintéticos
+SPL e SQL e confirma que somente os pares do provedor SPL chegam à propriedade.
 
 A versão v1.0.2 corrige a publicação truncada da v1.0.1. Antes da execução sobre
 os JARs reais, `bash -n bin/x22.sh bin/test-x22.sh` deve terminar sem mensagens.
@@ -50,17 +50,36 @@ O x22:
 2. localiza essas classes nos JARs do ODS;
 3. desmonta somente as classes candidatas;
 4. seleciona as que expõem `getRoutineType(ArrayList)`;
-5. deriva strings numéricas adicionadas à lista e converte `TL` para `T:L`.
+5. deriva strings numéricas adicionadas à lista e converte `TL` para `T:L`;
+6. seleciona para `psmd.supported.types` somente o provedor
+   `com.ibm.debug.spd.spl.internal.core.SPLRoutineService`.
+
+## Resultado confirmado em 2026-09-14
+
+| Provedor | Pares |
+| --- | --- |
+| JavaRoutineService | `0:1` |
+| PLSQLRoutineService | `0:3,1:3` |
+| SPLRoutineService | `0:4,1:4` |
+| SQLRoutineService | `0:0,1:0` |
+
+O projeto anuncia somente suas capacidades de Informix SPL:
+
+```properties
+psmd.supported.types=0:4,1:4
+```
+
+Os valores foram obtidos dos JARs do ODS 2.2.1.1. Não foram deduzidos de
+`T789`, do nome de uma rotina ou dos vetores sintéticos dos autotestes.
 
 ## Resultados
 
 - `x22/x22-summary.txt`: resumo sanitizado com JAR, classe provedora e associação de cada par, apropriado para revisão;
 - `x22-private.tar.gz`: bytecode e índices completos, fora do Git.
 
-Somente use `psmd.supported.types` quando o resumo apresentar
-`discovery_status=RESOLVED_STATIC_REVIEW` e os pares forem conferidos. Outros
-estados significam que a implementação foi localizada parcialmente ou calcula os
-valores de modo não coberto pelo extrator.
+Na versão v1.1.0, `routine_service_pairs` mantém todos os pares encontrados para
+auditoria, `spl_routine_service_pairs` contém apenas os pares do provedor SPL e
+`psmd.supported.types` recebe somente esta última lista.
 
 Se continuar sem resolução, enviar em ordem alfabética:
 

@@ -1,13 +1,13 @@
-# v0.1.1 | 2026-09-11T19:30:37Z | Criado com auxílio de ChatGPT.
+# v0.1.2-config | 2026-09-14T19:49:58Z | Atualizado com auxílio de ChatGPT.
 # Copiar para config/local.properties e preencher com dados reais.
 # Caminhos relativos são resolvidos a partir do diretório atual de execução.
 sm.host=
 sm.port=4554
 client.ip=
-# Obrigatório: saída exata de discover-supported-types-v0.1.1.sh.
-# Formato: TYPE:LANGUAGE; vários pares são separados por vírgula.
-# Não usar T789 e não testar números arbitrários.
-psmd.supported.types=
+# Confirmado no bytecode de com.ibm.debug.spd.spl.internal.core.SPLRoutineService
+# do ODS 2.2.1.1: tipos 0 e 1, ambos com linguagem SPL 4.
+# Não adicionar os pares dos provedores Java, PL/SQL ou SQL.
+psmd.supported.types=0:4,1:4
 socket.timeout.ms=10000
 run.timeout.seconds=60
 # URL real JCC/DRDA, usuário e arquivo com UMA chamada de rotina de teste existente.

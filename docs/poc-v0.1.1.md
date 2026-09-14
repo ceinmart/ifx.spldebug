@@ -1,13 +1,12 @@
-<!-- v0.1.1-doc2 | 2026-09-13T19:22:10Z | Atualizado com auxílio de ChatGPT. -->
+<!-- v0.1.1-doc3 | 2026-09-14T19:49:58Z | Atualizado com auxílio de ChatGPT. -->
 # Executar a POC v0.1.1
 
 ## Estado real
 
 Código experimental implementado e testado localmente, sem integração Informix
-executada. O par tipo/linguagem de SPL para `SupportedRoutines` ainda precisa ser
-observado no ambiente. Como o mantenedor não possui ODS executável, a coleta
-atual é estática sobre os JARs preservados do ODS 2.2.1.1.
-Sem esse valor, `--probe` e `--run` recusam a configuração antes de abrir sockets.
+executada. A coleta estática x22 confirmou no provedor SPL do ODS 2.2.1.1 os
+pares `0:4` e `1:4`. O próximo passo é validar o bootstrap contra o Session
+Manager e o Informix reais.
 
 ## Compilação e teste local
 
@@ -47,10 +46,10 @@ arquivo final. `type` e `language` são identificadores numéricos distintos.
 `T789`, usado em `CLIENT DEBUGINFO`, é outro campo e não fornece esses valores.
 Uma lista vazia também não significa “qualquer rotina”.
 
-Os levantamentos existentes provam o formato e a comparação exata dos pares,
-mas não trazem a implementação de `RoutineService.getRoutineType(...)` nem um
-bootstrap real com os números. Por isso esta versão não define um número por
-suposição.
+O levantamento x22 encontrou quatro provedores. O provedor específico de SPL,
+`com.ibm.debug.spd.spl.internal.core.SPLRoutineService`, adiciona `04` e `14`,
+serializados pelo cliente como `0:4` e `1:4`. Os pares dos provedores Java,
+PL/SQL e SQL não são capacidades deste cliente e não devem ser anunciados.
 
 ## Como descobrir o valor sem executar o ODS
 
@@ -68,9 +67,12 @@ classes candidatas e registros Eclipse, e tenta derivar os pares adicionados
 diretamente pelo método. Consulte o procedimento e os cuidados em
 [`levantamentos/x21-supported-routines.md`](levantamentos/x21-supported-routines.md).
 
-Se `x21/x21-summary.txt` contiver `psmd.supported.types=...`, o valor ainda deve
-ser revisado contra a coleta antes de ser usado. Se ficar vazio, não testar
-números: será preciso analisar `x21-private.tar.gz`, que não pode ser commitado.
+O x21 mostrou que `RoutineService` apenas delega para implementações de
+`IRoutineService`. O x22 localizou os provedores e resolveu o valor SPL. Use:
+
+```properties
+psmd.supported.types=0:4,1:4
+```
 
 `db2dbgm.jar` não substitui os bundles do ODS: ele implementa o Session Manager.
 Uma listagem de métodos ou os callers já coletados também não resolve o par.
@@ -95,7 +97,7 @@ rotina de teste; esse arquivo é ignorado pelo Git.
 | --- | --- |
 | sm.host / sm.port | Manager acessível ao cliente e ao Informix; standalone costuma usar 4554. |
 | client.ip | IPv4 real usado na identidade do cliente. |
-| psmd.supported.types | Linha produzida pela coleta acima, sem o nome da propriedade. |
+| psmd.supported.types | `0:4,1:4`, confirmado no `SPLRoutineService` do ODS 2.2.1.1. |
 | jdbc.url | URL JCC real do listener DRDA, começando por `jdbc:db2:`; sem senha. |
 | jdbc.user | Login com permissão de execução. |
 | call.file | Arquivo com uma chamada `CALL` ou `EXECUTE PROCEDURE/FUNCTION`. |

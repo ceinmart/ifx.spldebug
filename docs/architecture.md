@@ -1,8 +1,8 @@
 # Informix SPL Debugger — Arquitetura Técnica
 
-**Versão:** 1.3
+**Versão:** 1.4
 
-**Data:** 2026-09-13T19:22:10Z
+**Data:** 2026-09-14T19:49:58Z
 
 **Criado por:** ChatGPT / GPT-5.6 Sol  
 **Status:** código experimental v0.1.1; testes locais aprovados; integração Informix pendente
@@ -501,19 +501,18 @@ comprovam interoperabilidade com uma instalação Informix real.
 | `psmd_flow.txt`, ClientUtility.readReply | Resposta XML possui rc no primeiro nó filho. A POC exige PSMDReply/Reply com rc=0. |
 | `reports.txt`, PSMDTokens | Nomes observados: AtLine, AtBreak, AtBreakPt, AtException, RoutineText, LineMap. AtBreakpoint é nome conceitual/classe, não o token usado nesta POC. |
 
-O par específico para SPL Informix **ainda não foi encontrado nos trechos
-inspecionados**. `T789` do DEBUGINFO não permite deduzi-lo. O programa exige
-`psmd.supported.types` e recusa configuração vazia. O valor é a serialização de
-todos os elementos `<Routine type="T" language="L"/>` realmente anunciados pelo
-cliente: `T:L`, separados por vírgula. É uma lista de capacidades do cliente,
-não o tipo inferido a partir do nome da procedure.
+O par específico foi confirmado pela coleta x22 no bytecode de
+`com.ibm.debug.spd.spl.internal.core.SPLRoutineService`. Esse provedor adiciona
+as strings `04` e `14`; pelo contrato confirmado do `ClientComposer`, elas viram
+`<Routine type="0" language="4"/>` e `<Routine type="1" language="4"/>`.
+Portanto o cliente deste projeto deve configurar
+`psmd.supported.types=0:4,1:4`. `T789` continua sendo um campo independente.
 
-O mantenedor não possui ODS executável, mas conserva os JARs do ODS 2.2.1.1 que
-originaram os levantamentos. A coleta x21 é, portanto, o caminho atual: localiza
-o bundle que contém `RoutineService`, inspeciona `getRoutineType(ArrayList)`,
-classes relacionadas e registros de extensões Eclipse. A listagem de métodos e
-os callers recuperados não bastam. O procedimento fica em
-`levantamentos/x21-supported-routines.md`.
+O ODS completo anunciaria também pares fornecidos pelos plugins Java, PL/SQL e
+SQL. Eles não devem ser copiados para este projeto: `SupportedRoutines` declara
+as capacidades do cliente, e este cliente implementa somente Informix SPL. As
+evidências e o procedimento reproduzível ficam em
+`levantamentos/x22-routine-service-providers.md`.
 
 Uma captura autorizada de `InitializeClient` continua sendo evidência válida se
 um ambiente executável surgir futuramente. O extrator
@@ -543,7 +542,7 @@ invocação de Vim/Nano ou recompilação por consequência dessa funcionalidade
 
 ## 23. Pendências para validar ponta a ponta
 
-- Confirmar par type/language e disponibilidade/versões do JCC e manager.
+- Confirmar disponibilidade/versões do JCC e manager; o par SPL já foi resolvido.
 - Executar probe contra db2dbgm.jar; confirmar duração e comportamento das conexões.
 - Executar chamada de rotina de teste fornecida pelo mantenedor em banco com logging.
 - Confirmar parada inicial por StepInto, formato/envelope dos reports, correlação,
