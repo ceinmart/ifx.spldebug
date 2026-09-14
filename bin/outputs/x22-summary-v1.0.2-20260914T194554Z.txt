@@ -1,0 +1,17 @@
+# Evidência x22 v1.0.2 | Coletada em 2026-09-14T19:45:54Z
+# Registrada por Codex (ChatGPT) em 2026-09-14T19:49:58Z
+x22_version=1.0.2
+collected_utc=2026-09-14T19:45:54Z
+discovery_status=RESOLVED_STATIC_REVIEW
+jars_scanned=3619
+metadata_provider_candidates=166
+provider_class_owners=191
+routine_service_implementations=4
+routine_service_providers=com.ibm.debug.spd.java_2.0.0.v20110121_1852.jar|com.ibm.debug.spd.java.internal.core.JavaRoutineService,com.ibm.debug.spd.plsql_1.0.0.v20110114_1849.jar|com.ibm.debug.spd.plsql.internal.core.PLSQLRoutineService,com.ibm.debug.spd.spl_1.0.1.v20110114_1849.jar|com.ibm.debug.spd.spl.internal.core.SPLRoutineService,com.ibm.debug.spd.sql_1.0.0.v20110121_1852.jar|com.ibm.debug.spd.sql.internal.core.SQLRoutineService
+routine_service_pairs=0:1,0:3,1:3,0:4,1:4,0:0,1:0
+routine_service_pair_evidence=com.ibm.debug.spd.java_2.0.0.v20110121_1852.jar|com.ibm.debug.spd.java.internal.core.JavaRoutineService|0:1,com.ibm.debug.spd.plsql_1.0.0.v20110114_1849.jar|com.ibm.debug.spd.plsql.internal.core.PLSQLRoutineService|0:3,com.ibm.debug.spd.plsql_1.0.0.v20110114_1849.jar|com.ibm.debug.spd.plsql.internal.core.PLSQLRoutineService|1:3,com.ibm.debug.spd.spl_1.0.1.v20110114_1849.jar|com.ibm.debug.spd.spl.internal.core.SPLRoutineService|0:4,com.ibm.debug.spd.spl_1.0.1.v20110114_1849.jar|com.ibm.debug.spd.spl.internal.core.SPLRoutineService|1:4,com.ibm.debug.spd.sql_1.0.0.v20110121_1852.jar|com.ibm.debug.spd.sql.internal.core.SQLRoutineService|0:0,com.ibm.debug.spd.sql_1.0.0.v20110121_1852.jar|com.ibm.debug.spd.sql.internal.core.SQLRoutineService|1:0
+psmd.supported.types=0:1,0:3,1:3,0:4,1:4,0:0,1:0
+review_required=yes
+private_archive_must_not_be_committed=yes
+# Revisão: a linha acima era a agregação de todos os plugins do ODS.
+# Valor selecionado para o cliente Informix SPL: psmd.supported.types=0:4,1:4

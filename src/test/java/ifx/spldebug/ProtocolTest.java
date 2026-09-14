@@ -1,4 +1,4 @@
-/* v0.1.1 | 2026-09-11T19:30:37Z | Criado com auxílio de ChatGPT.
+/* v0.1.2 | 2026-09-14T19:49:58Z | Atualizado com auxílio de ChatGPT.
  * Testes locais com vetores sintéticos declarados. Não simulam validação Informix.
  */
 package ifx.spldebug;
@@ -38,9 +38,14 @@ public final class ProtocolTest {
         rejects(() -> Psmd.read(new ByteArrayInputStream(bad.array())),"oversized allocation");
         bad.putInt(4,-1);
         rejects(() -> Psmd.read(new ByteArrayInputStream(bad.array())),"negative length");
-        Document init=Psmd.parse(Psmd.initialize("a&\"b","1:2,3:4").getBytes(StandardCharsets.UTF_8));
+        Document init=Psmd.parse(Psmd.initialize("a&\"b","0:4,1:4").getBytes(StandardCharsets.UTF_8));
         check(((Element)init.getElementsByTagName("InitializeClient").item(0)).getAttribute("clientID").equals("a&\"b"),"XML escaping");
         check(init.getElementsByTagName("Routine").getLength()==2,"supported pair list");
+        NodeList splRoutines=init.getElementsByTagName("Routine");
+        check(((Element)splRoutines.item(0)).getAttribute("type").equals("0")&&
+                ((Element)splRoutines.item(0)).getAttribute("language").equals("4")&&
+                ((Element)splRoutines.item(1)).getAttribute("type").equals("1")&&
+                ((Element)splRoutines.item(1)).getAttribute("language").equals("4"),"observed SPL supported pairs");
         String observed="<PSMDRequest><InitializeClient><SupportedRoutines><Routine language='2' type=\"1\"/>"+
                 "<Routine type='3' language=\"4\"/></SupportedRoutines></InitializeClient></PSMDRequest>";
         check(SupportedTypes.discover(Psmd.encode(10,observed)).equals("1:2,3:4"),"discover supported types from framed XML");

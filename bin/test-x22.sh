@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Script: test-x22.sh
-# Versão: v1.0.0
+# Versão: v1.1.0
 # Criado em: 2026-09-14T18:51:29Z
+# Atualizado em: 2026-09-14T19:49:58Z
 # Criado por: Codex (ChatGPT)
 # Projeto: ifx.spldebug
 # Finalidade: validar a descoberta de um IRoutineService registrado em plugin.xml.
@@ -68,7 +69,9 @@ _main() {
     mkdir -p "$ods/plugins" \
         "$source_dir/com/ibm/debug/spd/internal/core" \
         "$source_dir/com/ibm/debug/spd/internal/services" \
-        "$source_dir/com/example" "$classes" "$jar_content"
+        "$source_dir/com/ibm/debug/spd/spl/internal/core" \
+        "$source_dir/com/ibm/debug/spd/sql/internal/core" \
+        "$classes" "$jar_content"
 
     cat > "$source_dir/com/ibm/debug/spd/internal/services/IRoutineService.java" <<'EOF'
 package com.ibm.debug.spd.internal.services;
@@ -103,14 +106,25 @@ public final class RoutineService {
 }
 EOF
 
-    cat > "$source_dir/com/example/InformixProvider.java" <<'EOF'
-package com.example;
+    cat > "$source_dir/com/ibm/debug/spd/spl/internal/core/SPLRoutineService.java" <<'EOF'
+package com.ibm.debug.spd.spl.internal.core;
 import java.util.ArrayList;
 import com.ibm.debug.spd.internal.services.IRoutineService;
-public final class InformixProvider implements IRoutineService {
+public final class SPLRoutineService implements IRoutineService {
     public void getRoutineType(ArrayList<String> values) {
-        values.add("12");
-        values.add("34");
+        values.add("04");
+        values.add("14");
+    }
+}
+EOF
+
+    cat > "$source_dir/com/ibm/debug/spd/sql/internal/core/SQLRoutineService.java" <<'EOF'
+package com.ibm.debug.spd.sql.internal.core;
+import java.util.ArrayList;
+import com.ibm.debug.spd.internal.services.IRoutineService;
+public final class SQLRoutineService implements IRoutineService {
+    public void getRoutineType(ArrayList<String> values) {
+        values.add("00");
     }
 }
 EOF
@@ -118,7 +132,8 @@ EOF
     cat > "$jar_content/plugin.xml" <<'EOF'
 <plugin>
   <extension point="com.ibm.debug.spd.routineService">
-    <service class="com.example.InformixProvider"/>
+    <service class="com.ibm.debug.spd.spl.internal.core.SPLRoutineService"/>
+    <service class="com.ibm.debug.spd.sql.internal.core.SQLRoutineService"/>
   </extension>
 </plugin>
 EOF
@@ -127,7 +142,7 @@ EOF
         xargs -0 "${JAVAC_CMD[@]}" -source 8 -target 8 -d "$classes" \
         2> "$TEMP_DIR/javac.stderr"
     cp -R "$classes/com" "$jar_content/"
-    "${JAR_CMD[@]}" cf "$ods/plugins/com.ibm.debug.spd.test.jar" -C "$jar_content" .
+    "${JAR_CMD[@]}" cf "$ods/plugins/com.ibm.debug.spd.spl_test.jar" -C "$jar_content" .
 
     bash "$ROOT_DIR/bin/x21.sh" --ods-root "$ods" --output "$TEMP_DIR/x21" \
         > "$TEMP_DIR/x21.stdout"
@@ -138,9 +153,10 @@ EOF
         --x21-output "$TEMP_DIR/x21" --output "$TEMP_DIR/x22" \
         > "$TEMP_DIR/x22.stdout"
     grep -Fxq 'discovery_status=RESOLVED_STATIC_REVIEW' "$TEMP_DIR/x22/x22-summary.txt"
-    grep -Fxq 'routine_service_implementations=1' "$TEMP_DIR/x22/x22-summary.txt"
-    grep -Fxq 'routine_service_pairs=1:2,3:4' "$TEMP_DIR/x22/x22-summary.txt"
-    grep -Fxq 'psmd.supported.types=1:2,3:4' "$TEMP_DIR/x22/x22-summary.txt"
+    grep -Fxq 'routine_service_implementations=2' "$TEMP_DIR/x22/x22-summary.txt"
+    grep -Fxq 'routine_service_pairs=0:4,1:4,0:0' "$TEMP_DIR/x22/x22-summary.txt"
+    grep -Fxq 'spl_routine_service_pairs=0:4,1:4' "$TEMP_DIR/x22/x22-summary.txt"
+    grep -Fxq 'psmd.supported.types=0:4,1:4' "$TEMP_DIR/x22/x22-summary.txt"
     [[ -s "$TEMP_DIR/x22-private.tar.gz" ]]
     printf 'PASS X22_SELF_TEST\n'
 }
