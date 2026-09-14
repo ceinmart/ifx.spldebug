@@ -7,3 +7,4 @@
 /config/call.sql
 /bin/outputs/*.private.*
 # bin/outputs/*.log é intencionalmente versionável.
+env.sh
