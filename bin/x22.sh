@@ -156,8 +156,92 @@ _main() {
     : > "$OUTPUT_DIR/javap.index.tsv"
 
     _extract_provider_candidates |
-        grep -E '^[A-Za-z_][A-Za-z0-9_$]*(\.[A-Za-z_][A-Za-z0-9_$]*)+$' |
-        sort -u > "$OUTPUT_DIR/providers.candidates.txt"
+        grep -E '^[A-Za-z_][A-Za-z0-9_$]*(\.[A-Za-z_][A-Za-z0-9_$]*)+
+
+    awk '{ value=$0; gsub(/\./,"/",value); print value ".class" }' \
+        "$OUTPUT_DIR/providers.candidates.txt" > "$TEMP_DIR/provider.entries"
+
+    find "$ODS_ROOT/plugins" -type f -name '*.jar' -print0 | sort -z > "$TEMP_DIR/jars.list"
+    local jarfile jars=0
+    while IFS= read -r -d '' jarfile; do
+        if ! "${JAR_CMD[@]}" tf "$jarfile" > "$TEMP_DIR/entries" 2>> "$OUTPUT_DIR/errors.log"; then
+            printf 'JAR_LIST_FAILED jar=%s\n' "$(basename -- "$jarfile")" >> "$OUTPUT_DIR/errors.log"
+            continue
+        fi
+        grep -Fxf "$TEMP_DIR/provider.entries" "$TEMP_DIR/entries" |
+            while IFS= read -r entry; do
+                printf '%s\t%s\n' "$jarfile" "$entry"
+            done >> "$OUTPUT_DIR/providers.owners.tsv" || true
+        ((jars+=1))
+        if (( jars % 250 == 0 )); then printf 'PROGRESS jars=%d\n' "$jars"; fi
+    done < "$TEMP_DIR/jars.list"
+    sort -u "$OUTPUT_DIR/providers.owners.tsv" -o "$OUTPUT_DIR/providers.owners.tsv"
+
+    local serial=0 entry class_name base output
+    while IFS=$'\t' read -r jarfile entry; do
+        [[ -n "$jarfile" && -n "$entry" ]] || continue
+        ((serial+=1))
+        class_name=$(_class_from_entry "$entry")
+        base="$(printf '%05d' "$serial")-$(_safe_name "$class_name")"
+        output="$OUTPUT_DIR/javap/$base.txt"
+        {
+            printf 'jar=%s\n' "$(basename -- "$jarfile")"
+            printf 'jar_sha256=%s\n' "$(sha256sum "$jarfile" | awk '{print $1}')"
+            printf 'class=%s\n' "$class_name"
+            printf '%s\n' '----- BEGIN JAVAP -p -c -l -s -----'
+            "${JAVAP_CMD[@]}" -classpath "$jarfile" -p -c -l -s "$class_name"
+        } > "$output" 2>> "$OUTPUT_DIR/errors.log" || {
+            printf 'JAVAP_FAILED jar=%s class=%s\n' "$(basename -- "$jarfile")" "$class_name" >> "$OUTPUT_DIR/errors.log"
+            continue
+        }
+        printf '%s\t%s\t%s\n' "$(basename -- "$jarfile")" "$class_name" "javap/$base.txt" >> "$OUTPUT_DIR/javap.index.tsv"
+        if grep -q 'getRoutineType(java.util.ArrayList' "$output"; then
+            printf '%s\t%s\t%s\n' "$(basename -- "$jarfile")" "$class_name" "javap/$base.txt" >> "$OUTPUT_DIR/providers.services.tsv"
+        fi
+    done < "$OUTPUT_DIR/providers.owners.tsv"
+
+    : > "$TEMP_DIR/pairs"
+    while IFS=$'\t' read -r _ _ relative; do
+        [[ -n "$relative" ]] || continue
+        _derive_pairs "$OUTPUT_DIR/$relative" >> "$TEMP_DIR/pairs"
+    done < "$OUTPUT_DIR/providers.services.tsv"
+    awk '!seen[$0]++' "$TEMP_DIR/pairs" > "$TEMP_DIR/pairs.unique"
+
+    local pairs status
+    pairs=$(paste -sd, "$TEMP_DIR/pairs.unique")
+    if [[ -n "$pairs" ]]; then
+        status="RESOLVED_STATIC_REVIEW"
+    elif [[ -s "$OUTPUT_DIR/providers.services.tsv" ]]; then
+        status="PROVIDERS_FOUND_UNRESOLVED"
+    elif [[ -s "$OUTPUT_DIR/providers.owners.tsv" ]]; then
+        status="CANDIDATE_CLASSES_FOUND_NO_SERVICE"
+    else
+        status="PROVIDER_CLASSES_NOT_FOUND"
+    fi
+
+    {
+        printf 'x22_version=%s\n' "$SCRIPT_VERSION"
+        printf 'collected_utc=%s\n' "$(date -u +%FT%TZ)"
+        printf 'discovery_status=%s\n' "$status"
+        printf 'jars_scanned=%s\n' "$jars"
+        printf 'metadata_provider_candidates=%s\n' "$(wc -l < "$OUTPUT_DIR/providers.candidates.txt")"
+        printf 'provider_class_owners=%s\n' "$(wc -l < "$OUTPUT_DIR/providers.owners.tsv")"
+        printf 'routine_service_implementations=%s\n' "$(wc -l < "$OUTPUT_DIR/providers.services.tsv")"
+        printf 'routine_service_pairs=%s\n' "$pairs"
+        printf 'psmd.supported.types=%s\n' "$pairs"
+        printf '%s\n' 'review_required=yes'
+        printf '%s\n' 'private_archive_must_not_be_committed=yes'
+    } > "$OUTPUT_DIR/x22-summary.txt"
+
+    tar -C "$(dirname -- "$OUTPUT_DIR")" -czf "$OUTPUT_DIR-private.tar.gz" "$(basename -- "$OUTPUT_DIR")"
+    cat "$OUTPUT_DIR/x22-summary.txt"
+    printf 'PRIVATE_ARCHIVE=%s\n' "$OUTPUT_DIR-private.tar.gz"
+    printf 'PASS X22_STATIC_COLLECTION\n'
+}
+
+_main "$@"
+ |
+        sort -u > "$OUTPUT_DIR/providers.candidates.txt" || true
 
     awk '{ value=$0; gsub(/\./,"/",value); print value ".class" }' \
         "$OUTPUT_DIR/providers.candidates.txt" > "$TEMP_DIR/provider.entries"
