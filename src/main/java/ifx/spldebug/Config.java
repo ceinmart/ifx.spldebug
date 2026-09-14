@@ -1,4 +1,4 @@
-/* v0.1.0 | 2026-09-11T12:34:07Z | Criado com auxílio de ChatGPT.
+/* v0.1.1 | 2026-09-11T19:30:37Z | Criado com auxílio de ChatGPT.
  * Configuração externa. Nenhuma credencial ou SQL é impresso automaticamente.
  */
 package ifx.spldebug;
@@ -39,7 +39,7 @@ public final class Config {
         String ip=required("client.ip");
         if(!ip.matches("[0-9]{1,3}(\\.[0-9]{1,3}){3}")) throw new IllegalArgumentException("CLIENT_IPV4_REQUIRED");
         for(String n:ip.split("\\.")) if(Integer.parseInt(n)>255) throw new IllegalArgumentException("INVALID_CLIENT_IPV4");
-        // Os pares tipo:linguagem devem vir de evidência do ambiente, nunca de adivinhação.
+        // Obter com discover-supported-types-v0.1.1.sh; nunca deduzir de T789.
         Psmd.initialize("validate",required("psmd.supported.types"));
         String host=required("sm.host");
         if(!host.matches("[A-Za-z0-9.-]+")) throw new IllegalArgumentException("SM_HOST_DNS_OR_IPV4_REQUIRED");

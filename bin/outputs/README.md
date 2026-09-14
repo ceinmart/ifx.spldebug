@@ -1,9 +1,13 @@
-<!-- v0.1.0 | 2026-09-11T12:34:07Z | Criado com auxílio de ChatGPT. -->
+<!-- v0.1.1 | 2026-09-11T19:30:37Z | Criado com auxílio de ChatGPT. -->
 # Resultados de compilação e testes
 
 Os scripts salvam logs com versão, data/hora UTC, PID, commit e códigos de saída.
 Arquivos `.log` são versionáveis. Após executar no servidor, revisar e commitar
 somente os logs necessários; o assistente pode lê-los diretamente no GitHub.
+
+`supported-types-discovery` contém somente os pares derivados do
+`SupportedRoutines`; a captura usada como entrada pode conter dados do ambiente
+e nunca deve ser copiada para esta pasta ou commitada.
 
 `test-local` comprova somente testes locais. `SESSION_MANAGER_PROBE` comprova
 inicialização/encerramento do manager. Apenas

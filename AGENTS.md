@@ -1,8 +1,8 @@
 # AGENTS.md
 
-**Versão:** 1.1
+**Versão:** 1.3
 
-**Data:** 2026-09-11T12:34:07Z
+**Data:** 2026-09-13T19:22:10Z
 
 **Criado por:** ChatGPT / GPT-5.6 Sol
 
@@ -20,6 +20,7 @@ Regras para qualquer agente ou assistente que trabalhe neste repositório.
 - `bin/outputs/` guarda resultados versionáveis; ler outputs novos do mantenedor antes de repetir coletas. Não confundir testes locais com integração Informix.
 - O levantamento histórico foi recuperado de anexos em 2026-09-11. As conclusões reproduzíveis ficam na arquitetura; dumps originais não devem entrar no Git.
 - Se faltar evidência, procurar primeiro nos levantamentos e histórico/anexos acessíveis. Só pedir reenvio quando realmente não estiver disponível.
+- `psmd.supported.types` deve vir de um `InitializeClient` real ou do registro/bytecode efetivo do ODS. No ambiente atual não há ODS executável; usar primeiro `bin/x21.sh`. Nunca deduzir o par de `T789`, de nomes SQL ou de vetores sintéticos.
 
 ## Escopo
 

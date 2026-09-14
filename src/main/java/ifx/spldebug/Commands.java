@@ -1,4 +1,4 @@
-/* v0.1.0 | 2026-09-11T12:34:07Z | Criado com auxílio de ChatGPT.
+/* v0.1.1 | 2026-09-11T19:30:37Z | Criado com auxílio de ChatGPT.
  * Contrato do projeto, independente de terminal e transporte. Não é a API IBM.
  */
 package ifx.spldebug;

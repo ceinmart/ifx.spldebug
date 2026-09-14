@@ -1,4 +1,4 @@
-/* v0.1.0 | 2026-09-11T12:34:07Z | Criado com auxílio de ChatGPT.
+/* v0.1.1 | 2026-09-11T19:30:37Z | Criado com auxílio de ChatGPT.
  * Console mínimo; a renderização fica aqui e não no motor de depuração.
  */
 package ifx.spldebug;
@@ -10,7 +10,7 @@ import java.util.concurrent.*;
 import static ifx.spldebug.Commands.*;
 
 public final class Main {
-    public static final String VERSION="0.1.0";
+    public static final String VERSION="0.1.1";
     public static void main(String[] args) {
         int rc;
         try { rc=run(args); }

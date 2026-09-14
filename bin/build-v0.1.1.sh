@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# v0.1.0 | 2026-09-11T12:34:07Z | Criado com auxílio de ChatGPT.
+# v0.1.1 | 2026-09-11T19:30:37Z | Criado com auxílio de ChatGPT.
 # Compila fontes próprios com alvo Java 8, sem baixar ou distribuir dependências.
-source "$(dirname -- "${BASH_SOURCE[0]}")/common-v0.1.0.sh"
+source "$(dirname -- "${BASH_SOURCE[0]}")/common-v0.1.1.sh"
 spldbg_build() {
     cd "$SPLDBG_ROOT"
     "$SPLDBG_JAVA" -version

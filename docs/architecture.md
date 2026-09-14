@@ -1,11 +1,11 @@
 # Informix SPL Debugger — Arquitetura Técnica
 
-**Versão:** 1.1
+**Versão:** 1.3
 
-**Data:** 2026-09-11T12:34:07Z
+**Data:** 2026-09-13T19:22:10Z
 
 **Criado por:** ChatGPT / GPT-5.6 Sol  
-**Status:** código experimental v0.1.0; testes locais aprovados; integração Informix pendente
+**Status:** código experimental v0.1.1; testes locais aprovados; integração Informix pendente
 
 ## 1. Objetivo
 
@@ -457,7 +457,7 @@ O levantamento está fechado o suficiente para iniciar uma POC mínima.
 
 A próxima etapa do projeto deve validar o caminho real ponta a ponta antes de qualquer implementação de VS Code.
 
-## 20. Decisões de implementação v0.1.0
+## 20. Decisões de implementação v0.1.1
 
 O motor Java concentra PSMD, JDBC e ciclo de vida. O console atual é um consumidor
 do motor. Python CLI/TUI e DAP permanecem futuros consumidores independentes.
@@ -466,7 +466,7 @@ Não há dependência do VS Code em Python nem dependência do motor em interfac
 O contrato interno tem solicitação identificada, resposta correlacionada e
 eventos assíncronos imutáveis. A ponte futura poderá usar JSON por linha em
 stdin/stdout de um processo Java filho, com logs em stderr. Isso será um
-protocolo próprio versionado, não DAP. A v0.1.0 **não implementa essa ponte**.
+protocolo próprio versionado, não DAP. A v0.1.1 **não implementa essa ponte**.
 
 Um worker possui a conexão JDBC executora. Outro solicita reports. Cada
 round-trip PSMD usa seu próprio socket com timeout, evitando que o polling
@@ -478,7 +478,7 @@ COMPLETED. Encerramento usa Terminate quando há execução pendente e
 TerminateClient; o worker limpa DEBUGINFO, faz rollback e fecha JDBC.
 Timeout no cleanup é falha explícita, nunca PASS.
 
-A v0.1.0 aceita uma sessão, uma conexão e uma chamada por processo. Usa StepInto
+A v0.1.1 aceita uma sessão, uma conexão e uma chamada por processo. Usa StepInto
 internamente para pedir a parada inicial após identificar a conexão nos reports
 (se ainda não houve parada) e Run para continuar. A operação
 interativa de stepping fica pendente. No teste automático, continuar cada
@@ -503,9 +503,22 @@ comprovam interoperabilidade com uma instalação Informix real.
 
 O par específico para SPL Informix **ainda não foi encontrado nos trechos
 inspecionados**. `T789` do DEBUGINFO não permite deduzi-lo. O programa exige
-`psmd.supported.types` e recusa configuração vazia. Confirmar o valor por
-registro do plugin de rotinas/RoutineService do ODS ou captura real do bootstrap;
-não testar números por tentativa e erro. A listagem de métodos não basta.
+`psmd.supported.types` e recusa configuração vazia. O valor é a serialização de
+todos os elementos `<Routine type="T" language="L"/>` realmente anunciados pelo
+cliente: `T:L`, separados por vírgula. É uma lista de capacidades do cliente,
+não o tipo inferido a partir do nome da procedure.
+
+O mantenedor não possui ODS executável, mas conserva os JARs do ODS 2.2.1.1 que
+originaram os levantamentos. A coleta x21 é, portanto, o caminho atual: localiza
+o bundle que contém `RoutineService`, inspeciona `getRoutineType(ArrayList)`,
+classes relacionadas e registros de extensões Eclipse. A listagem de métodos e
+os callers recuperados não bastam. O procedimento fica em
+`levantamentos/x21-supported-routines.md`.
+
+Uma captura autorizada de `InitializeClient` continua sendo evidência válida se
+um ambiente executável surgir futuramente. O extrator
+`discover-supported-types-v0.1.1.sh` permanece disponível, mas não é requisito
+para a coleta atual.
 
 ## 22. Fonte SPL: visualização, sem edição
 
@@ -538,5 +551,5 @@ invocação de Vim/Nano ou recompilação por consequência dessa funcionalidade
 - Conferir resultado e eventuais timeouts no encerramento, inclusive interrupção.
 - Somente depois habilitar os comandos pendentes e iniciar ponte Python/DAP.
 
-Os scripts e a evidência local ficam descritos em `poc-v0.1.0.md`; o catálogo
+Os scripts e a evidência local ficam descritos em `poc-v0.1.1.md`; o catálogo
 completo do escopo conhecido do projeto fica em `commands.md` e `Commands.java`.
