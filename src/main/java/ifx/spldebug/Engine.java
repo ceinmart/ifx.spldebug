@@ -1,4 +1,4 @@
-/* v0.1.2 | 2026-09-15T14:10:00Z | Atualizado com auxílio de ChatGPT.
+/* v0.1.3 | 2026-09-15T17:27:25Z | Atualizado com auxílio de ChatGPT.
  * Núcleo sem terminal: executa JDBC em worker próprio e recebe reports em outro.
  * API interna estruturada para console, futura ponte Python e futuro DAP.
  */
