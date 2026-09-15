@@ -1,4 +1,4 @@
-/* v0.1.4 | 2026-09-15T18:43:36Z | Atualizado com auxílio de ChatGPT.
+/* v0.1.5 | 2026-09-15T18:56:54Z | Atualizado com auxílio de ChatGPT.
  * Núcleo sem terminal: executa JDBC em worker próprio e recebe reports em outro.
  * API interna estruturada para console, futura ponte Python e futuro DAP.
  */
@@ -86,7 +86,7 @@ public final class Engine implements AutoCloseable {
     private synchronized void execute(String sql) throws Exception {
         if(closing||state!=State.READY) throw new IllegalStateException("INVALID_STATE");
         String url=config.required("jdbc.url"), user=config.required("jdbc.user");
-        if(!url.startsWith("jdbc:db2:")) throw new IllegalArgumentException("JCC_DRDA_URL_REQUIRED");
+        if(!isJccDrdaUrl(url)) throw new IllegalArgumentException("JCC_DRDA_URL_REQUIRED");
         String password=System.getenv("SPLDBG_PASSWORD");
         if(password==null) throw new IllegalArgumentException("MISSING_ENV_SPLDBG_PASSWORD");
         Class.forName("com.ibm.db2.jcc.DB2Driver");
@@ -150,6 +150,10 @@ public final class Engine implements AutoCloseable {
                 }
             }
         });
+    }
+    /** JCC usa jdbc:ids: para Informix; jdbc:db2: permanece aceito por compatibilidade. */
+    static boolean isJccDrdaUrl(String url) {
+        return url.startsWith("jdbc:ids:")||url.startsWith("jdbc:db2:");
     }
     private String debugInfo() {
         return "M"+config.required("sm.host")+":"+config.number("sm.port",4554,1,65535)+",I"+config.required("client.ip")+",P"+pid+",T789,C"+connectionID+",L"+config.debugTraceLevel();
