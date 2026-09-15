@@ -1,4 +1,4 @@
-<!-- v0.1.1-doc8 | 2026-09-15T17:27:25Z | Atualizado com auxílio de ChatGPT. -->
+<!-- v0.1.1-doc9 | 2026-09-15T18:43:36Z | Atualizado com auxílio de ChatGPT. -->
 # Executar a POC v0.1.1
 
 ## Estado real
@@ -119,6 +119,13 @@ A coleta x26 encontrou o runtime PSMD compilado em `oninit`, incluindo os tipos
 Isso confirma que o runtime existe, mas ainda não demonstra que o JCC usado é o
 mais adequado para essa versão do servidor.
 
+Um primeiro teste com o JCC obtido do Db2 12.1 terminou com
+`SQLSTATE_NULL_CODE_-4228` antes de `DEBUGINFO_APPLIED`; o JCC 4.27.25 continuou
+aceitando a marcação, mas sem registro do runtime. Como a versão exata do novo
+JAR ainda não foi coletada e o motor anterior não distinguia conexão,
+`setAutoCommit` e aplicação do debugInfo, esse resultado não deve ser atribuído
+a uma fase por suposição. O motor agora emite marcos separados para essas fases.
+
 Copie `config/poc-v0.1.1.properties.example` para `config/local.properties` e
 preencha os campos reais. Coloque em `config/call.sql` somente uma chamada da
 rotina de teste; esse arquivo é ignorado pelo Git.
@@ -165,6 +172,10 @@ chamada retornar sem o Session Manager reportar a conexão do runtime, o erro é
 `NO_DEBUG_RUNTIME_REGISTRATION`; se houver conexão mas nenhuma parada, o erro é
 `NO_DEBUG_STOP_EVENT`. `runtime.registration.grace.ms`, com padrão de 1000 ms,
 evita classificar como ausência um report recebido junto com o retorno da CALL.
+
+Antes de aplicar o debugInfo, o motor emite `JDBC_CONNECT_STARTED`,
+`JDBC_CONNECTED`, `AUTOCOMMIT_DISABLED` e `DEBUGINFO_APPLY_STARTED`; isso
+localiza falhas de drivers sem registrar URL, usuário, senha ou SQL.
 
 Para diagnóstico, `debug.trace.level=1` envia `L1` em `CLIENT DEBUGINFO`. O
 binário `oninit` dessa instalação referencia `/tmp/ifxpsmd.log`; verifique esse
