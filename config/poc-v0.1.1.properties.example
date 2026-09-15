@@ -1,4 +1,4 @@
-# v0.1.4-config | 2026-09-15T17:27:25Z | Atualizado com auxílio de ChatGPT.
+# v0.1.5-config | 2026-09-15T18:56:54Z | Atualizado com auxílio de ChatGPT.
 # Copiar para config/local.properties e preencher com dados reais.
 # Caminhos relativos são resolvidos a partir do diretório atual de execução.
 sm.host=
@@ -17,6 +17,10 @@ runtime.registration.grace.ms=1000
 debug.trace.level=0
 run.timeout.seconds=60
 # URL real JCC/DRDA, usuário e arquivo com UMA chamada de rotina de teste existente.
+# Para Informix, prefira jdbc:ids:. Propriedades da URL são separadas por ponto e vírgula.
+# Exemplo: jdbc:ids://host:9591/database:securityMechanism=3;
+# O formato jdbc:db2: permanece aceito para compatibilidade com clientes antigos.
+# Exemplo legado: jdbc:db2://host:9591/database:informixType=1;securityMechanism=3;
 # Não colocar senha/propriedades de credencial na URL; usar SPLDBG_PASSWORD.
 jdbc.url=
 jdbc.user=
