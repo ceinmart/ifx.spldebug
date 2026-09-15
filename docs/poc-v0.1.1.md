@@ -1,4 +1,4 @@
-<!-- v0.1.1-doc12 | 2026-09-15T19:10:57Z | Atualizado com auxílio de ChatGPT. -->
+<!-- v0.1.1-doc13 | 2026-09-15T19:14:17Z | Atualizado com auxílio de ChatGPT. -->
 # Executar a POC v0.1.1
 
 ## Estado real
@@ -182,9 +182,10 @@ bash bin/run-v0.1.1.sh --probe config/local.properties
 bash bin/run-v0.1.1.sh --run config/local.properties --auto
 ```
 
-`run-v0.1.1.sh` compara o fingerprint dos fontes com o último build e recompila
-automaticamente quando necessário, evitando reutilizar classes antigas após
-`git pull`.
+`run-v0.1.1.sh` compara o fingerprint dos fontes com o último build, recompila
+automaticamente quando necessário e executa Java a partir da raiz do checkout.
+Assim, `call.file=config/call.sql` funciona mesmo quando o wrapper é chamado de
+outro diretório.
 
 Probe faz InitializeClient/Options/TerminateClient e não acessa JDBC. O teste
 automático espera parada, envia Continue, espera conclusão e executa cleanup.
