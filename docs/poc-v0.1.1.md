@@ -1,4 +1,4 @@
-<!-- v0.1.1-doc6 | 2026-09-15T14:20:45Z | Atualizado com auxílio de ChatGPT. -->
+<!-- v0.1.1-doc7 | 2026-09-15T14:34:00Z | Atualizado com auxílio de ChatGPT. -->
 # Executar a POC v0.1.1
 
 ## Estado real
@@ -103,6 +103,15 @@ No ambiente real testado em 2026-09-15, esse requisito foi confirmado:
 `LO_LOG` tanto nos defaults de `onstat -g smb s` quanto nos `Create Flags`
 reportados por `oncheck -pS`. Portanto, o sbspace não explica o erro
 `NO_DEBUG_RUNTIME_REGISTRATION` observado nesse ambiente.
+
+A coleta x25 confirmou também que `ifxhomol1_soc6` usa `drsoctcp` na porta
+9591, o listener está ativo e o banco `softel` possui buffered logging. Um novo
+teste substituiu `sm.host=localhost` por `sm.host=101.40.0.203`; cliente e
+manager comunicaram-se pelo IPv4 explícito, mas o runtime continuou sem abrir
+conexão ou emitir `PRE_ENTER_ROUTINE`. Assim, resolução IPv4/IPv6 também foi
+descartada nesse ambiente. A investigação seguinte deve comparar o JCC usado
+com os JARs fornecidos pela instalação e confirmar a presença dos componentes
+de debug no servidor.
 
 Copie `config/poc-v0.1.1.properties.example` para `config/local.properties` e
 preencha os campos reais. Coloque em `config/call.sql` somente uma chamada da
