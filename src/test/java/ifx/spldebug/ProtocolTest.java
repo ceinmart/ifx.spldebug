@@ -1,4 +1,4 @@
-/* v0.1.5 | 2026-09-15T18:43:36Z | Atualizado com auxílio de ChatGPT.
+/* v0.1.6 | 2026-09-15T18:56:54Z | Atualizado com auxílio de ChatGPT.
  * Testes locais com vetores sintéticos declarados. Não simulam validação Informix.
  */
 package ifx.spldebug;
@@ -59,6 +59,9 @@ public final class ProtocolTest {
         rejects(() -> Psmd.initialize("x",""),"unknown supported types");
         rejects(() -> Psmd.initialize("x","SQL"),"non-numeric pair");
         check(Engine.errorCode(new java.sql.SQLException("private detail",null,-4228)).equals("SQLSTATE_NULL_CODE_-4228"),"null SQLSTATE remains structured");
+        check(Engine.isJccDrdaUrl("jdbc:ids://host:9591/db:securityMechanism=3;"),"preferred Informix JCC URL");
+        check(Engine.isJccDrdaUrl("jdbc:db2://host:9591/db:informixType=1;"),"compatible JCC URL");
+        check(!Engine.isJccDrdaUrl("jdbc:informix-sqli://host:9088/db"),"reject non-JCC SQLI URL");
         rejects(() -> Psmd.parse("<!DOCTYPE x [<!ENTITY e SYSTEM 'file:///etc/passwd'>]><x>&e;</x>".getBytes(StandardCharsets.UTF_8)),"external entity");
         Psmd.checkReply(new Psmd.Frame(10,0,"<PSMDReply><Reply rc='0'/></PSMDReply>".getBytes(StandardCharsets.UTF_8),new byte[0],new byte[0])); checks++;
         rejects(() -> Psmd.checkReply(new Psmd.Frame(10,0,"<PSMDReply><Reply rc='-141'/></PSMDReply>".getBytes(StandardCharsets.UTF_8),new byte[0],new byte[0])),"remote error");
