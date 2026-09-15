@@ -1,8 +1,8 @@
 # Informix SPL Debugger — Arquitetura Técnica
 
-**Versão:** 1.7
+**Versão:** 1.8
 
-**Data:** 2026-09-15T19:10:57Z
+**Data:** 2026-09-15T19:29:18Z
 
 **Criado por:** ChatGPT / GPT-5.6 Sol  
 **Status:** código experimental v0.1.1; JCC 4.27.25/4.34.30 aprovados; registro do runtime Informix em investigação
@@ -571,6 +571,12 @@ executado e confirmou conexão, `autoCommit=false`, aplicação do debugInfo e
 execução da chamada. O resultado final permaneceu
 `NO_DEBUG_RUNTIME_REGISTRATION`, igual ao JCC 4.27.25; a versão do JCC não explica
 a ausência do runtime no Session Manager.
+
+Com `L1`, a coleta x27 não encontrou `/tmp/ifxpsmd.log`, thread PSMD/debug nem
+mensagem relacionada no online.log após uma execução que chegou a
+`CALL_STARTED`. O trace inexistente sugere que o servidor não iniciou o caminho
+PSMD; os campos e o parser de `CLIENT DEBUGINFO` no `oninit` passam a ser a
+fronteira prioritária da investigação.
 
 O log privado do Session Manager não contém `EnterRoutine`, identificação de
 rotina ou report de linha para essa execução. Isso localiza a falha entre a
