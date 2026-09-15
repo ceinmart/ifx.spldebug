@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# v0.1.2 | 2026-09-15T19:03:14Z | Atualizado com auxílio de ChatGPT.
-# Executa console/POC e recompila automaticamente quando os fontes mudarem.
+# v0.1.3 | 2026-09-15T19:14:17Z | Atualizado com auxílio de ChatGPT.
+# Executa console/POC a partir da raiz e recompila quando os fontes mudarem.
 source "$(dirname -- "${BASH_SOURCE[0]}")/common-v0.1.1.sh"
 spldbg_run() {
     local fingerprint_file="$SPLDBG_ROOT/bin/classes/.source-sha256"
@@ -21,6 +21,8 @@ spldbg_run() {
             export SPLDBG_PASSWORD
         fi
     fi
+    # call.file e demais caminhos relativos têm como base estável a raiz do checkout.
+    cd "$SPLDBG_ROOT"
     "$SPLDBG_JAVA" -cp "$cp" ifx.spldebug.Main "$@"
 }
 spldbg_logged run spldbg_run "$@"
