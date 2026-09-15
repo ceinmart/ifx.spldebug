@@ -1,11 +1,11 @@
 # Informix SPL Debugger — Arquitetura Técnica
 
-**Versão:** 1.6
+**Versão:** 1.7
 
-**Data:** 2026-09-15T18:56:54Z
+**Data:** 2026-09-15T19:10:57Z
 
 **Criado por:** ChatGPT / GPT-5.6 Sol  
-**Status:** código experimental v0.1.1; bootstrap real aprovado; conexão do JCC 4.34.30 e registro do runtime em investigação
+**Status:** código experimental v0.1.1; JCC 4.27.25/4.34.30 aprovados; registro do runtime Informix em investigação
 
 ## 1. Objetivo
 
@@ -566,7 +566,11 @@ Com o JCC 4.34.30 do Db2 12.1 GA e URL `jdbc:db2:`, o erro
 `;` entre `informixType=1` e `securityMechanism=3` não alterou o resultado. Para
 isolar o formato específico de Informix, o próximo teste usa o prefixo oficial
 `jdbc:ids:` com `securityMechanism=3` e sem `informixType`; o núcleo aceita tanto
-`jdbc:ids:` quanto `jdbc:db2:` para permitir a comparação.
+`jdbc:ids:` quanto `jdbc:db2:` para permitir a comparação. Esse teste foi
+executado e confirmou conexão, `autoCommit=false`, aplicação do debugInfo e
+execução da chamada. O resultado final permaneceu
+`NO_DEBUG_RUNTIME_REGISTRATION`, igual ao JCC 4.27.25; a versão do JCC não explica
+a ausência do runtime no Session Manager.
 
 O log privado do Session Manager não contém `EnterRoutine`, identificação de
 rotina ou report de linha para essa execução. Isso localiza a falha entre a
