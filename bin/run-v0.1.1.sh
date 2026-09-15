@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
-# v0.1.1 | 2026-09-11T19:30:37Z | Criado com auxílio de ChatGPT.
-# Executa console/POC; preserva saída e status, exige JCC apenas para --run.
+# v0.1.2 | 2026-09-15T19:03:14Z | Atualizado com auxílio de ChatGPT.
+# Executa console/POC e recompila automaticamente quando os fontes mudarem.
 source "$(dirname -- "${BASH_SOURCE[0]}")/common-v0.1.1.sh"
 spldbg_run() {
+    local fingerprint_file="$SPLDBG_ROOT/bin/classes/.source-sha256"
+    local expected actual=""
+    expected=$(spldbg_source_fingerprint)
+    if [[ -f $fingerprint_file ]]; then actual=$(<"$fingerprint_file"); fi
+    if [[ $actual != "$expected" || ! -f $SPLDBG_ROOT/bin/classes/ifx/spldebug/Main.class ]]; then
+        echo "BUILD_REQUIRED source_fingerprint_changed=yes"
+        bash "$SPLDBG_ROOT/bin/build-v0.1.1.sh"
+    fi
     local cp="$SPLDBG_ROOT/bin/classes"
     if [[ ${1:-} == --run ]]; then
         if [[ -z ${JCC_JAR:-} || ! -f $JCC_JAR ]]; then echo "FAIL JCC_JAR_REQUIRED"; return 2; fi
