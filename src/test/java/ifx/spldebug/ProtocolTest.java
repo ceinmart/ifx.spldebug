@@ -1,4 +1,4 @@
-/* v0.1.3 | 2026-09-15T14:10:00Z | Atualizado com auxílio de ChatGPT.
+/* v0.1.4 | 2026-09-15T17:27:25Z | Atualizado com auxílio de ChatGPT.
  * Testes locais com vetores sintéticos declarados. Não simulam validação Informix.
  */
 package ifx.spldebug;
@@ -80,6 +80,12 @@ public final class ProtocolTest {
         }
         Properties p=new Properties(); p.setProperty("client.ip","127.0.0.1");
         check(new Config(p).runtimeRegistrationGrace()==1000,"runtime registration grace default");
+        check(new Config(p).debugTraceLevel()==0,"debug trace default");
+        p.setProperty("debug.trace.level","1");
+        check(new Config(p).debugTraceLevel()==1,"debug trace enabled");
+        p.setProperty("debug.trace.level","2");
+        rejects(() -> new Config(p).debugTraceLevel(),"debug trace limit");
+        p.remove("debug.trace.level");
         p.setProperty("runtime.registration.grace.ms","10001");
         rejects(() -> new Config(p).runtimeRegistrationGrace(),"runtime registration grace limit");
         p.remove("runtime.registration.grace.ms");
