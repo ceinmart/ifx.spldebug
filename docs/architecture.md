@@ -1,11 +1,11 @@
 # Informix SPL Debugger — Arquitetura Técnica
 
-**Versão:** 1.5
+**Versão:** 1.6
 
-**Data:** 2026-09-15T14:10:00Z
+**Data:** 2026-09-15T18:56:54Z
 
 **Criado por:** ChatGPT / GPT-5.6 Sol  
-**Status:** código experimental v0.1.1; bootstrap real aprovado; registro do runtime Informix pendente
+**Status:** código experimental v0.1.1; bootstrap real aprovado; conexão do JCC 4.34.30 e registro do runtime em investigação
 
 ## 1. Objetivo
 
@@ -559,6 +559,14 @@ O teste com Informix confirmou `InitializeClient`, `Options`, conexão JCC/DRDA,
 aplicação de `CLIENT DEBUGINFO` sem exceção, execução da `CALL`, limpeza do
 atributo, rollback, fechamento JDBC e `TerminateClient`. A mesma chamada também
 foi validada por `dbaccess`.
+
+Com o JCC 4.34.30 do Db2 12.1 GA e URL `jdbc:db2:`, o erro
+`SQLSTATE_NULL_CODE_-4228` ocorreu entre `JDBC_CONNECT_STARTED` e
+`JDBC_CONNECTED`, portanto durante a abertura da conexão. O separador correto
+`;` entre `informixType=1` e `securityMechanism=3` não alterou o resultado. Para
+isolar o formato específico de Informix, o próximo teste usa o prefixo oficial
+`jdbc:ids:` com `securityMechanism=3` e sem `informixType`; o núcleo aceita tanto
+`jdbc:ids:` quanto `jdbc:db2:` para permitir a comparação.
 
 O log privado do Session Manager não contém `EnterRoutine`, identificação de
 rotina ou report de linha para essa execução. Isso localiza a falha entre a
