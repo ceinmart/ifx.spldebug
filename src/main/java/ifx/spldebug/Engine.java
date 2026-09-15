@@ -148,7 +148,7 @@ public final class Engine implements AutoCloseable {
         });
     }
     private String debugInfo() {
-        return "M"+config.required("sm.host")+":"+config.number("sm.port",4554,1,65535)+",I"+config.required("client.ip")+",P"+pid+",T789,C"+connectionID+",L0";
+        return "M"+config.required("sm.host")+":"+config.number("sm.port",4554,1,65535)+",I"+config.required("client.ip")+",P"+pid+",T789,C"+connectionID+",L"+config.debugTraceLevel();
     }
     private static void setDebugInfo(Connection c,String value) throws Exception {
         Class<?> api=Class.forName("com.ibm.db2.jcc.DB2Connection");
