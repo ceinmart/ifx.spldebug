@@ -1,6 +1,6 @@
 # ifx.spldebug
 
-<!-- v0.1.5-doc | 2026-09-15T18:56:54Z | Atualizado com auxílio de ChatGPT. -->
+<!-- v0.1.6-doc | 2026-09-15T19:10:57Z | Atualizado com auxílio de ChatGPT. -->
 
 `ifx.spldebug` é um projeto experimental para construir um debugger interativo de **SPL do IBM/HCL Informix**, inicialmente como cliente texto e, após validação do protocolo, como base para integração com o VS Code por meio de um Debug Adapter.
 
@@ -32,9 +32,9 @@ Motor Java, console texto e scripts estão implementados. Compilação e testes
 locais foram executados com OpenJDK 17, gerando classes compatíveis com Java 8.
 A integração real já confirmou o bootstrap PSMD, conexão pelo JCC 4.27.25,
 aplicação de `CLIENT DEBUGINFO`, execução e cleanup. O runtime Informix ainda não
-se registrou no Session Manager. O JCC 4.34.30 falhou durante a abertura da
-conexão com a URL de compatibilidade `jdbc:db2:`; o próximo teste usa a URL
-específica `jdbc:ids:`. O par `psmd.supported.types=0:4,1:4` foi confirmado
+se registrou no Session Manager. O JCC 4.34.30 falhou com a URL de compatibilidade `jdbc:db2:`, mas conectou,
+aplicou `CLIENT DEBUGINFO` e executou a chamada usando a URL específica
+`jdbc:ids:`. Ambos os drivers continuam sem registro do runtime no manager. O par `psmd.supported.types=0:4,1:4` foi confirmado
 estaticamente no provedor SPL do ODS 2.2.1.1 pelas coletas `x21` e `x22`.
 
 - [Compilar, descobrir SupportedRoutines e testar](docs/poc-v0.1.1.md)
