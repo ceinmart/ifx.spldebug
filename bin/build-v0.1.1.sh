@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# v0.1.1 | 2026-09-11T19:30:37Z | Criado com auxílio de ChatGPT.
-# Compila fontes próprios com alvo Java 8, sem baixar ou distribuir dependências.
+# v0.1.2 | 2026-09-15T19:03:14Z | Atualizado com auxílio de ChatGPT.
+# Compila fontes próprios com alvo Java 8 e grava o fingerprint compilado.
 source "$(dirname -- "${BASH_SOURCE[0]}")/common-v0.1.1.sh"
 spldbg_build() {
     cd "$SPLDBG_ROOT"
@@ -18,6 +18,7 @@ spldbg_build() {
     else options=(--release 8)
     fi
     "${compiler[@]}" "${options[@]}" -encoding UTF-8 -Xlint:all -d bin/classes src/main/java/ifx/spldebug/*.java src/test/java/ifx/spldebug/*.java
+    spldbg_source_fingerprint > bin/classes/.source-sha256
     echo "PASS BUILD"
 }
 spldbg_logged build spldbg_build
