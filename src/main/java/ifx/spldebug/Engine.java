@@ -1,4 +1,4 @@
-/* v0.1.3 | 2026-09-15T17:27:25Z | Atualizado com auxílio de ChatGPT.
+/* v0.1.4 | 2026-09-15T18:43:36Z | Atualizado com auxílio de ChatGPT.
  * Núcleo sem terminal: executa JDBC em worker próprio e recebe reports em outro.
  * API interna estruturada para console, futura ponte Python e futuro DAP.
  */
@@ -112,9 +112,13 @@ public final class Engine implements AutoCloseable {
             boolean marked=false;
             try {
                 DriverManager.setLoginTimeout(config.timeout()/1000);
+                emit("JDBC_CONNECT_STARTED");
                 connection=DriverManager.getConnection(url,user,password);
+                emit("JDBC_CONNECTED");
                 connection.setAutoCommit(false);
+                emit("AUTOCOMMIT_DISABLED");
                 marked=true;
+                emit("DEBUGINFO_APPLY_STARTED");
                 setDebugInfo(connection,debugInfo());
                 emit("DEBUGINFO_APPLIED");
                 if(closing||state==State.FAILED) throw new IllegalStateException("EXECUTION_CANCELLED");
@@ -191,7 +195,9 @@ public final class Engine implements AutoCloseable {
     private void failCleanup(Exception e) { failure="CLEANUP_"+errorCode(e); state=State.FAILED; emit(failure); }
     static String errorCode(Exception e) {
         if(e instanceof SQLException) {
-            SQLException s=(SQLException)e; return "SQLSTATE_"+s.getSQLState()+"_CODE_"+s.getErrorCode();
+            SQLException s=(SQLException)e;
+            String state=s.getSQLState()==null?"NULL":s.getSQLState();
+            return "SQLSTATE_"+state+"_CODE_"+s.getErrorCode();
         }
         String msg=e.getMessage();
         boolean safe=msg!=null&&(msg.matches("[A-Z0-9_.:-]{1,120}")||msg.matches("(?:MISSING_CONFIG|INVALID_CONFIG)_[a-z.]{1,50}"));
