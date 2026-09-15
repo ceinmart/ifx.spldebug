@@ -1,4 +1,4 @@
-<!-- v0.1.1-doc11 | 2026-09-15T19:03:14Z | Atualizado com auxílio de ChatGPT. -->
+<!-- v0.1.1-doc12 | 2026-09-15T19:10:57Z | Atualizado com auxílio de ChatGPT. -->
 # Executar a POC v0.1.1
 
 ## Estado real
@@ -138,6 +138,13 @@ por `jdbc:ids:`. O valor `securityMechanism=3` é necessário porque servidores
 Informix não suportam o mecanismo 9. O formato `jdbc:db2:` continua aceito pelo
 projeto para comparação com o JCC 4.27.25 e clientes antigos. O motor agora
 aceita ambos os prefixos JCC/DRDA.
+
+O teste real posterior com JCC 4.34.30 e `jdbc:ids:` confirmou
+`JDBC_CONNECTED`, `AUTOCOMMIT_DISABLED`, `DEBUGINFO_APPLIED` e `CALL_STARTED`.
+Terminou novamente em `NO_DEBUG_RUNTIME_REGISTRATION`. Portanto, tanto o JCC
+4.27.25 quanto o 4.34.30 estabelecem a conexão e aceitam o atributo; a ausência
+do runtime no Session Manager permanece e a investigação passa ao trace
+`/tmp/ifxpsmd.log` do `oninit`.
 
 Copie `config/poc-v0.1.1.properties.example` para `config/local.properties` e
 preencha os campos reais. Coloque em `config/call.sql` somente uma chamada da
