@@ -1,4 +1,4 @@
-<!-- v0.1.1-doc13 | 2026-09-15T19:14:17Z | Atualizado com auxílio de ChatGPT. -->
+<!-- v0.1.1-doc14 | 2026-09-15T19:29:18Z | Atualizado com auxílio de ChatGPT. -->
 # Executar a POC v0.1.1
 
 ## Estado real
@@ -145,6 +145,13 @@ Terminou novamente em `NO_DEBUG_RUNTIME_REGISTRATION`. Portanto, tanto o JCC
 4.27.25 quanto o 4.34.30 estabelecem a conexão e aceitam o atributo; a ausência
 do runtime no Session Manager permanece e a investigação passa ao trace
 `/tmp/ifxpsmd.log` do `oninit`.
+
+A coleta dinâmica x27 foi executada com `debug.trace.level=1` e confirmou toda
+a sequência até `CALL_STARTED`. O `oninit` não criou `/tmp/ifxpsmd.log`, não
+manteve thread identificável como PSMD/debug após a chamada e não registrou erro
+correspondente no online.log. Isso indica que o runtime não chegou à sua fase de
+inicialização PSMD; a coleta seguinte deve examinar estaticamente o parser de
+`CLIENT DEBUGINFO` e os símbolos Udbg/PSMD do binário do servidor.
 
 Copie `config/poc-v0.1.1.properties.example` para `config/local.properties` e
 preencha os campos reais. Coloque em `config/call.sql` somente uma chamada da
