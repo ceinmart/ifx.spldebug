@@ -1,4 +1,4 @@
-<!-- v0.1.1-doc9 | 2026-09-15T18:43:36Z | Atualizado com auxílio de ChatGPT. -->
+<!-- v0.1.1-doc10 | 2026-09-15T18:56:54Z | Atualizado com auxílio de ChatGPT. -->
 # Executar a POC v0.1.1
 
 ## Estado real
@@ -119,12 +119,25 @@ A coleta x26 encontrou o runtime PSMD compilado em `oninit`, incluindo os tipos
 Isso confirma que o runtime existe, mas ainda não demonstra que o JCC usado é o
 mais adequado para essa versão do servidor.
 
-Um primeiro teste com o JCC obtido do Db2 12.1 terminou com
-`SQLSTATE_NULL_CODE_-4228` antes de `DEBUGINFO_APPLIED`; o JCC 4.27.25 continuou
-aceitando a marcação, mas sem registro do runtime. Como a versão exata do novo
-JAR ainda não foi coletada e o motor anterior não distinguia conexão,
-`setAutoCommit` e aplicação do debugInfo, esse resultado não deve ser atribuído
-a uma fase por suposição. O motor agora emite marcos separados para essas fases.
+O JAR do Db2 12.1 GA foi confirmado como JCC 4.34.30. Com a URL de
+compatibilidade `jdbc:db2:`, ele terminou em `SQLSTATE_NULL_CODE_-4228` entre
+`JDBC_CONNECT_STARTED` e `JDBC_CONNECTED`: a falha ocorre na abertura da conexão,
+e não em `setDB2ClientDebugInfo`. Repetir a URL com o separador correto `;` entre
+`informixType=1` e `securityMechanism=3` produziu o mesmo resultado, descartando
+o separador como causa isolada.
+
+A sintaxe específica e preferida pelo IBM Data Server Driver para Informix é
+`jdbc:ids:`. O próximo teste do JCC 4.34.30 deve usar:
+
+```properties
+jdbc.url=jdbc:ids://vulca_ifxhom:9591/softel:securityMechanism=3;
+```
+
+Nesse formato, não usar `informixType=1`; a identidade Informix já é expressa
+por `jdbc:ids:`. O valor `securityMechanism=3` é necessário porque servidores
+Informix não suportam o mecanismo 9. O formato `jdbc:db2:` continua aceito pelo
+projeto para comparação com o JCC 4.27.25 e clientes antigos. O motor agora
+aceita ambos os prefixos JCC/DRDA.
 
 Copie `config/poc-v0.1.1.properties.example` para `config/local.properties` e
 preencha os campos reais. Coloque em `config/call.sql` somente uma chamada da
@@ -135,7 +148,7 @@ rotina de teste; esse arquivo é ignorado pelo Git.
 | sm.host / sm.port | Manager acessível ao cliente e ao Informix; standalone costuma usar 4554. |
 | client.ip | IPv4 real usado na identidade do cliente. |
 | psmd.supported.types | `0:4,1:4`, confirmado no `SPLRoutineService` do ODS 2.2.1.1. |
-| jdbc.url | URL JCC real do listener DRDA, começando por `jdbc:db2:`; sem senha. |
+| jdbc.url | URL JCC/DRDA; para Informix prefira `jdbc:ids:`. `jdbc:db2:` fica disponível por compatibilidade; sem senha. |
 | jdbc.user | Login com permissão de execução. |
 | call.file | Arquivo com uma chamada `CALL` ou `EXECUTE PROCEDURE/FUNCTION`. |
 | run.timeout.seconds | Prazo máximo do teste; padrão 60 segundos. |
