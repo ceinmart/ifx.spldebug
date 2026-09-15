@@ -1,9 +1,11 @@
 # Informix SPL Debugger — Arquitetura Técnica
 
-**Versão:** 1.0  
-**Data:** 2026-09-11  
+**Versão:** 1.7
+
+**Data:** 2026-09-15T19:10:57Z
+
 **Criado por:** ChatGPT / GPT-5.6 Sol  
-**Status:** levantamento consolidado antes da POC mínima
+**Status:** código experimental v0.1.1; JCC 4.27.25/4.34.30 aprovados; registro do runtime Informix em investigação
 
 ## 1. Objetivo
 
@@ -454,3 +456,126 @@ A estratégia recomendada é exigir que o usuário aponte para cópias legítima
 O levantamento está fechado o suficiente para iniciar uma POC mínima.
 
 A próxima etapa do projeto deve validar o caminho real ponta a ponta antes de qualquer implementação de VS Code.
+
+## 20. Decisões de implementação v0.1.1
+
+O motor Java concentra PSMD, JDBC e ciclo de vida. O console atual é um consumidor
+do motor. Python CLI/TUI e DAP permanecem futuros consumidores independentes.
+Não há dependência do VS Code em Python nem dependência do motor em interface.
+
+O contrato interno tem solicitação identificada, resposta correlacionada e
+eventos assíncronos imutáveis. A ponte futura poderá usar JSON por linha em
+stdin/stdout de um processo Java filho, com logs em stderr. Isso será um
+protocolo próprio versionado, não DAP. A v0.1.1 **não implementa essa ponte**.
+
+Um worker possui a conexão JDBC executora. Outro solicita reports. Cada
+round-trip PSMD usa seu próprio socket com timeout, evitando que o polling
+bloqueie o stream dos comandos. Essa escolha de conexão por round-trip é
+decisão experimental do projeto e precisa de teste contra o manager real.
+O estado central é NEW / READY / RUNNING / STOPPED / COMPLETED / FAILED / CLOSED.
+Uma chamada pode terminar antes do ACK de Run; o ACK não pode sobrescrever
+COMPLETED. Encerramento usa Terminate quando há execução pendente e
+TerminateClient; o worker limpa DEBUGINFO, faz rollback e fecha JDBC.
+Timeout no cleanup é falha explícita, nunca PASS.
+
+A v0.1.1 aceita uma sessão, uma conexão e uma chamada por processo. Usa StepInto
+internamente para pedir a parada inicial após identificar a conexão nos reports
+(se ainda não houve parada) e Run para continuar. A operação
+interativa de stepping fica pendente. No teste automático, continuar cada
+parada recebida até a conclusão ou timeout. Não instalar SPL nem alterar schema.
+
+## 21. Evidências adicionais recuperadas
+
+Foram acessados os arquivos abaixo, fora do repositório. As observações não
+comprovam interoperabilidade com uma instalação Informix real.
+
+| Evidência | Conclusão observada |
+| --- | --- |
+| `xml_protocol.txt`, ClientComposer | `SupportedRoutines` contém `Routine` com atributos numéricos `type` e `language`. |
+| `connection_routine_flow.txt`, SessionClient | Compatibilidade compara pares de tipo/linguagem; lista vazia não é um curinga. |
+| `debug_info.txt`, ClientSessionManager.generateClientId | `clientID` é IP + dois-pontos + identificador P; deve coincidir com os campos I/P de DEBUGINFO. |
+| `psmd_flow.txt`, MessageHeader | Envio big-endian, marcador DB2D, F0=0 no construtor de request. A semântica geral de F0 permanece aberta. |
+| `connection_routine_flow.txt`, ClientUtility | ClientRequest/ConnectionRequest usam tipo 25; SendClientCommands usa tipo 20. |
+| `connection_routine_flow.txt`, SessionClientThread/SessionClient | ConnectionRequest antes de EnterRoutine encontra conexão inexistente e retorna -120. Solicitar StepInto só após observar a conexão nos reports. |
+| `xml_protocol.txt`, ClientComposer | RecvClientReports usa clientID e timeout=2000. TerminateClient usa clientID. |
+| `psmd_flow.txt`, ClientUtility.readReply | Resposta XML possui rc no primeiro nó filho. A POC exige PSMDReply/Reply com rc=0. |
+| `reports.txt`, PSMDTokens | Nomes observados: AtLine, AtBreak, AtBreakPt, AtException, RoutineText, LineMap. AtBreakpoint é nome conceitual/classe, não o token usado nesta POC. |
+
+O par específico foi confirmado pela coleta x22 no bytecode de
+`com.ibm.debug.spd.spl.internal.core.SPLRoutineService`. Esse provedor adiciona
+as strings `04` e `14`; pelo contrato confirmado do `ClientComposer`, elas viram
+`<Routine type="0" language="4"/>` e `<Routine type="1" language="4"/>`.
+Portanto o cliente deste projeto deve configurar
+`psmd.supported.types=0:4,1:4`. `T789` continua sendo um campo independente.
+
+O ODS completo anunciaria também pares fornecidos pelos plugins Java, PL/SQL e
+SQL. Eles não devem ser copiados para este projeto: `SupportedRoutines` declara
+as capacidades do cliente, e este cliente implementa somente Informix SPL. As
+evidências e o procedimento reproduzível ficam em
+`levantamentos/x22-routine-service-providers.md`.
+
+Uma captura autorizada de `InitializeClient` continua sendo evidência válida se
+um ambiente executável surgir futuramente. O extrator
+`discover-supported-types-v0.1.1.sh` permanece disponível, mas não é requisito
+para a coleta atual.
+
+## 22. Fonte SPL: visualização, sem edição
+
+A fonte futura deverá ser associada à identidade exata da rotina e a um mapa
+entre posição do runtime e linha exibida. Não assumir que rid PSMD seja procid,
+nem que seqno ou posição no arquivo coincida automaticamente com a linha PSMD.
+
+Origens planejadas:
+
+1. Conteúdo do runtime, se RoutineText/LineMap forem efetivamente recebidos e
+   seus formatos forem confirmados. Hoje há evidência dos tokens, não garantia
+   de que o Informix forneça o fonte por esse caminho.
+2. Catálogo do banco: SYSPROCBODY armazena texto de criação sob datakey T,
+   identificado por procid e seqno. Resolver sobrecarga/schema/assinatura antes
+   de recuperar, preservar texto e verificar o mapeamento de linhas.
+3. Arquivo local indicado explicitamente, somente leitura, com correspondência
+   de versão validada pelo usuário e mapeamento conhecido.
+
+Fonte oficial para o catálogo: [HCL Informix 14.10 — SYSPROCBODY](https://help.hcl-software.com/hclinformix/1410/sqr/ids_sqr_051.html).
+A implementação de SOURCE_GET e SOURCE_MAP é futura. Não criar editor,
+invocação de Vim/Nano ou recompilação por consequência dessa funcionalidade.
+
+## 23. Pendências para validar ponta a ponta
+
+- Confirmar versão exata do JCC e compatibilidade com a versão do Informix; o par SPL já foi resolvido.
+- Confirmar o endereço de retorno do servidor Informix até o Session Manager.
+- Identificar por que o runtime não registrou a rotina SPL no teste real.
+- Confirmar parada inicial por StepInto, formato/envelope dos reports, correlação,
+  Run e limpeza. Parser recusa respostas incompatíveis explicitamente.
+- Conferir resultado e eventuais timeouts no encerramento, inclusive interrupção.
+- Somente depois habilitar os comandos pendentes e iniciar ponte Python/DAP.
+
+Os scripts e a evidência local ficam descritos em `poc-v0.1.1.md`; o catálogo
+completo do escopo conhecido do projeto fica em `commands.md` e `Commands.java`.
+
+## 24. Resultado real de 2026-09-15
+
+O teste com Informix confirmou `InitializeClient`, `Options`, conexão JCC/DRDA,
+aplicação de `CLIENT DEBUGINFO` sem exceção, execução da `CALL`, limpeza do
+atributo, rollback, fechamento JDBC e `TerminateClient`. A mesma chamada também
+foi validada por `dbaccess`.
+
+Com o JCC 4.34.30 do Db2 12.1 GA e URL `jdbc:db2:`, o erro
+`SQLSTATE_NULL_CODE_-4228` ocorreu entre `JDBC_CONNECT_STARTED` e
+`JDBC_CONNECTED`, portanto durante a abertura da conexão. O separador correto
+`;` entre `informixType=1` e `securityMechanism=3` não alterou o resultado. Para
+isolar o formato específico de Informix, o próximo teste usa o prefixo oficial
+`jdbc:ids:` com `securityMechanism=3` e sem `informixType`; o núcleo aceita tanto
+`jdbc:ids:` quanto `jdbc:db2:` para permitir a comparação. Esse teste foi
+executado e confirmou conexão, `autoCommit=false`, aplicação do debugInfo e
+execução da chamada. O resultado final permaneceu
+`NO_DEBUG_RUNTIME_REGISTRATION`, igual ao JCC 4.27.25; a versão do JCC não explica
+a ausência do runtime no Session Manager.
+
+O log privado do Session Manager não contém `EnterRoutine`, identificação de
+rotina ou report de linha para essa execução. Isso localiza a falha entre a
+marcação da conexão e o registro do runtime Informix; não há evidência de que
+`StepInto` tenha sido simplesmente enviado tarde. A POC agora diferencia esse
+caso como `NO_DEBUG_RUNTIME_REGISTRATION` e emite `DEBUGINFO_APPLIED` após o JCC
+aceitar a marcação. Uma janela configurável curta permite ao polling consumir
+um registro que tenha chegado simultaneamente ao retorno da chamada.

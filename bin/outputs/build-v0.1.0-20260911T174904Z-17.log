@@ -1,0 +1,15 @@
+spldbg_version=0.1.0 mode=build utc=2026-09-11T17:49:04Z
+83d0798c866743e03e7a53fa81dee50d8974d573
+worktree_dirty=yes
+70dc1dae98ea39ed444b6ac264c3e0dce5b0dd3f3b79e945d1309dfb79c02e81  src/main/java/ifx/spldebug/Commands.java
+1d46657cafbbc3416fbc42b98f1a39ffc48f61dd81631014abf44f6dd6a2e5e8  src/main/java/ifx/spldebug/Config.java
+653f90fe11cb87a91c56098be41c3f4415cb14fcd810a417c0fb5acdd37deefb  src/main/java/ifx/spldebug/Engine.java
+baaa8b48c9f40a504dcd96d86157dc12665e8e9245c3332ea45deb38823684c7  src/main/java/ifx/spldebug/Main.java
+f9e82da40c8635b747d4bb7c9bbac85da5a6732dbdcb73db8e388203a1ceda20  src/main/java/ifx/spldebug/Psmd.java
+1bf3b305e54f8c1cf9f88f33399e6e36d277f310134c3b3b3aab660cd60d46d0  src/test/java/ifx/spldebug/ProtocolTest.java
+openjdk version "17.0.20" 2026-07-21
+OpenJDK Runtime Environment (build 17.0.20+8-1-24.04-Ubuntu)
+OpenJDK 64-Bit Server VM (build 17.0.20+8-1-24.04-Ubuntu, mixed mode, sharing)
+javac 17.0.20
+PASS BUILD
+exit_code=0 log_exit_code=0
