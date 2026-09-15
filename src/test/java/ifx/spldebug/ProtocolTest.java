@@ -1,4 +1,4 @@
-/* v0.1.4 | 2026-09-15T17:27:25Z | Atualizado com auxílio de ChatGPT.
+/* v0.1.5 | 2026-09-15T18:43:36Z | Atualizado com auxílio de ChatGPT.
  * Testes locais com vetores sintéticos declarados. Não simulam validação Informix.
  */
 package ifx.spldebug;
@@ -58,6 +58,7 @@ public final class ProtocolTest {
         rejects(() -> SupportedTypes.discover("<Routine type='1' language='2'/>".getBytes(StandardCharsets.US_ASCII)),"routine outside SupportedRoutines");
         rejects(() -> Psmd.initialize("x",""),"unknown supported types");
         rejects(() -> Psmd.initialize("x","SQL"),"non-numeric pair");
+        check(Engine.errorCode(new java.sql.SQLException("private detail",null,-4228)).equals("SQLSTATE_NULL_CODE_-4228"),"null SQLSTATE remains structured");
         rejects(() -> Psmd.parse("<!DOCTYPE x [<!ENTITY e SYSTEM 'file:///etc/passwd'>]><x>&e;</x>".getBytes(StandardCharsets.UTF_8)),"external entity");
         Psmd.checkReply(new Psmd.Frame(10,0,"<PSMDReply><Reply rc='0'/></PSMDReply>".getBytes(StandardCharsets.UTF_8),new byte[0],new byte[0])); checks++;
         rejects(() -> Psmd.checkReply(new Psmd.Frame(10,0,"<PSMDReply><Reply rc='-141'/></PSMDReply>".getBytes(StandardCharsets.UTF_8),new byte[0],new byte[0])),"remote error");
