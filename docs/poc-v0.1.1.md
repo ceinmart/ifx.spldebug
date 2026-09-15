@@ -1,4 +1,4 @@
-<!-- v0.1.1-doc10 | 2026-09-15T18:56:54Z | Atualizado com auxílio de ChatGPT. -->
+<!-- v0.1.1-doc11 | 2026-09-15T19:03:14Z | Atualizado com auxílio de ChatGPT. -->
 # Executar a POC v0.1.1
 
 ## Estado real
@@ -174,6 +174,10 @@ No cliente, depois de preencher a configuração:
 bash bin/run-v0.1.1.sh --probe config/local.properties
 bash bin/run-v0.1.1.sh --run config/local.properties --auto
 ```
+
+`run-v0.1.1.sh` compara o fingerprint dos fontes com o último build e recompila
+automaticamente quando necessário, evitando reutilizar classes antigas após
+`git pull`.
 
 Probe faz InitializeClient/Options/TerminateClient e não acessa JDBC. O teste
 automático espera parada, envia Continue, espera conclusão e executa cleanup.
