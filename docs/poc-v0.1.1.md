@@ -1,4 +1,4 @@
-<!-- v0.1.1-doc4 | 2026-09-15T14:10:00Z | Atualizado com auxílio de ChatGPT. -->
+<!-- v0.1.1-doc5 | 2026-09-15T14:30:00Z | Atualizado com auxílio de ChatGPT. -->
 # Executar a POC v0.1.1
 
 ## Estado real
@@ -77,9 +77,26 @@ o mantenedor não possui um ODS executável.
 
 ## Preparar integração
 
-Use Informix 14.10 de teste, listener DRDA, banco com logging, rotina existente e
-permissão para executá-la. O driver é `db2jcc4.jar`, fornecido pelo mantenedor, e
-o manager é `db2dbgm.jar`. Os scripts não instalam nem distribuem esses JARs.
+Use Informix 14.10 de teste, listener DRDA, rotina existente e permissão para
+executá-la. Além do logging do banco, o runtime de debug exige que o parâmetro
+`SBSPACENAME` indique um **sbspace existente e criado com `LOGGING=ON`**. Esse
+sbspace é usado pelo servidor para armazenar as mensagens XML enviadas pelo
+cliente de debug. O driver é `db2jcc4.jar`, fornecido pelo mantenedor, e o
+manager é `db2dbgm.jar`. Os scripts não instalam nem distribuem esses JARs.
+
+Esse requisito é documentado pela IBM em
+[Starting an SPL debugging session with Optim Development Studio](https://www.ibm.com/docs/en/informix-servers/12.10.0?topic=routines-starting-spl-debugging-session-optim-development-studio).
+Antes do teste real, valide sem alterar a instância:
+
+```bash
+onstat -c | grep -E '^[[:space:]]*(DBSERVERNAME|DBSERVERALIASES|SBSPACENAME)[[:space:]]'
+onstat -d
+```
+
+`SBSPACENAME` vazio, um nome ausente em `onstat -d` ou um sbspace sem logging
+impede considerar o ambiente pronto. A criação ou mudança do sbspace é uma ação
+de administração e deve ser feita pelo DBA; a POC não deve executá-la
+automaticamente.
 
 Copie `config/poc-v0.1.1.properties.example` para `config/local.properties` e
 preencha os campos reais. Coloque em `config/call.sql` somente uma chamada da
