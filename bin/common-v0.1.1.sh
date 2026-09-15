@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
-# v0.1.1 | 2026-09-11T19:30:37Z | Criado com auxílio de ChatGPT.
-# Infraestrutura de logs. Nunca registrar ambiente completo, senha ou conteúdo SQL.
+# v0.1.2 | 2026-09-15T19:03:14Z | Atualizado com auxílio de ChatGPT.
+# Infraestrutura de logs e identificação dos fontes compilados.
+# Nunca registrar ambiente completo, senha ou conteúdo SQL.
 set -euo pipefail
 SPLDBG_ROOT=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 SPLDBG_JAVA=${JAVA_HOME:+$JAVA_HOME/bin/}java
+# Fingerprint estável permite impedir execução de classes antigas após git pull.
+spldbg_source_fingerprint() {
+    (cd "$SPLDBG_ROOT" && sha256sum src/main/java/ifx/spldebug/*.java src/test/java/ifx/spldebug/*.java | sha256sum | awk '{print $1}')
+}
 spldbg_logged() {
     local mode=$1
     shift
