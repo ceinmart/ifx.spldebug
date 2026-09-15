@@ -1,4 +1,4 @@
-<!-- v0.1.1-doc7 | 2026-09-15T14:34:00Z | Atualizado com auxílio de ChatGPT. -->
+<!-- v0.1.1-doc8 | 2026-09-15T17:27:25Z | Atualizado com auxílio de ChatGPT. -->
 # Executar a POC v0.1.1
 
 ## Estado real
@@ -113,6 +113,12 @@ descartada nesse ambiente. A investigação seguinte deve comparar o JCC usado
 com os JARs fornecidos pela instalação e confirmar a presença dos componentes
 de debug no servidor.
 
+A coleta x26 encontrou o runtime PSMD compilado em `oninit`, incluindo os tipos
+`PreEnterRoutine`, `EnterRoutine`, `AtLine` e a referência ao arquivo
+`/tmp/ifxpsmd.log`. Encontrou apenas um driver JCC disponível, versão 4.27.25.
+Isso confirma que o runtime existe, mas ainda não demonstra que o JCC usado é o
+mais adequado para essa versão do servidor.
+
 Copie `config/poc-v0.1.1.properties.example` para `config/local.properties` e
 preencha os campos reais. Coloque em `config/call.sql` somente uma chamada da
 rotina de teste; esse arquivo é ignorado pelo Git.
@@ -127,6 +133,7 @@ rotina de teste; esse arquivo é ignorado pelo Git.
 | call.file | Arquivo com uma chamada `CALL` ou `EXECUTE PROCEDURE/FUNCTION`. |
 | run.timeout.seconds | Prazo máximo do teste; padrão 60 segundos. |
 | socket.timeout.ms | Prazo de conexão/leitura PSMD; padrão 10000 ms. |
+| debug.trace.level | `0` normalmente; use `1` apenas para gerar diagnóstico do runtime. |
 
 Exporte `JCC_JAR` e `DBGM_JAR` com caminhos completos. A senha é perguntada no
 terminal ou recebida em `SPLDBG_PASSWORD`, sem ser impressa. O motor usa
@@ -158,6 +165,12 @@ chamada retornar sem o Session Manager reportar a conexão do runtime, o erro é
 `NO_DEBUG_RUNTIME_REGISTRATION`; se houver conexão mas nenhuma parada, o erro é
 `NO_DEBUG_STOP_EVENT`. `runtime.registration.grace.ms`, com padrão de 1000 ms,
 evita classificar como ausência um report recebido junto com o retorno da CALL.
+
+Para diagnóstico, `debug.trace.level=1` envia `L1` em `CLIENT DEBUGINFO`. O
+binário `oninit` dessa instalação referencia `/tmp/ifxpsmd.log`; verifique esse
+arquivo depois de uma execução com trace. Ele não deve ser commitado e pode
+conter nomes de rotinas, SQL ou outros dados privados. Retorne o valor para `0`
+depois da coleta.
 
 Cada script permanente da POC grava saída em `bin/outputs/`. Depois da execução,
 revise e commite quando útil os logs `build-*.log`, `test-local-*.log` e
