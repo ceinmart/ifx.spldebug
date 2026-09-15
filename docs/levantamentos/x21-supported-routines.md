@@ -1,5 +1,6 @@
 <!--
-Versão: v1.0.0
+Versão: v1.1.0
+Atualizado em: 2026-09-15T14:10:00Z
 Criado em: 2026-09-13 16:22:10 -03:00
 Criado por: Codex (ChatGPT)
 Projeto: ifx.spldebug
@@ -20,27 +21,12 @@ Entretanto, os arquivos recuperados contêm apenas os **callers** de
 providers nem o registro de extensões que fornece os números. Portanto o valor
 de `psmd.supported.types` ainda não pode ser obtido dos resultados x18/x20.
 
-## Executar
+## Execução histórica
 
-O script não inicia o ODS e não altera os JARs. Ele usa a cópia já extraída em
-`/home/informix/tmp/spl.debug/ods-2.2.1.1`:
-
-```bash
-cd /home/informix/tmp/spl.debug
-bash /CAMINHO/DO/REPOSITORIO/bin/x21.sh
-```
-
-Ou informe os caminhos explicitamente:
-
-```bash
-bash bin/x21.sh \
-  --ods-root /home/informix/tmp/spl.debug/ods-2.2.1.1 \
-  --output /home/informix/tmp/spl.debug/x21
-```
-
-Requisitos: Bash, Java/JDK, `unzip`, `tar`, `sha256sum` e utilitários GNU. O
-script localiza `jar`/`javap` em `JAVA_HOME`, ao lado do executável `java` ou nos
-módulos do JDK 9+.
+O coletor x21 foi temporário, não iniciava o ODS nem alterava seus JARs. Conforme
+a política atual, scripts `x*` e seus outputs são trocados pela conversa e não
+permanecem no repositório. Esta página conserva apenas a finalidade e a
+conclusão técnica revisada da coleta já realizada.
 
 ## O que é coletado
 
@@ -59,7 +45,7 @@ conferido contra o bytecode coletado antes de entrar na configuração.
 
 ## Arquivos resultantes
 
-- `x21/x21-summary.txt`: resumo sanitizado; pode ser commitado após revisão.
+- `x21/x21-summary.txt`: resumo sanitizado enviado pela conversa.
 - `x21-private.tar.gz`: coleta completa; **não commitar**.
 
 Se `discovery_status=RESOLVED_STATIC_REVIEW`, enviar primeiro somente o resumo.
@@ -67,16 +53,7 @@ Se continuar `UNRESOLVED` ou `ROUTINE_SERVICE_NOT_FOUND`, serão necessários, e
 ordem alfabética:
 
 - `x21-private.tar.gz` — anexar diretamente à conversa, fora do Git;
-- `x21-summary.txt` — copiar para `bin/outputs/` e commitar.
+- `x21-summary.txt` — enviar pela conversa.
 
-## Autoteste
-
-Antes de executar sobre os JARs reais:
-
-```bash
-bash bin/test-x21.sh
-```
-
-O teste compila um JAR sintético temporário, valida descoberta, metadados,
-conversão dos pares e criação do arquivo privado. Resultado esperado:
-`PASS X21_SELF_TEST`. Isso valida o coletor, não os números do Informix.
+O autoteste histórico usou JAR sintético e validou a mecânica do coletor; ele
+não validava os números do Informix.

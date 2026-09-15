@@ -1,12 +1,12 @@
-<!-- v0.1.1-doc3 | 2026-09-14T19:49:58Z | Atualizado com auxílio de ChatGPT. -->
+<!-- v0.1.1-doc4 | 2026-09-15T14:10:00Z | Atualizado com auxílio de ChatGPT. -->
 # Executar a POC v0.1.1
 
 ## Estado real
 
-Código experimental implementado e testado localmente, sem integração Informix
-executada. A coleta estática x22 confirmou no provedor SPL do ODS 2.2.1.1 os
-pares `0:4` e `1:4`. O próximo passo é validar o bootstrap contra o Session
-Manager e o Informix reais.
+Código experimental implementado e testado localmente. O teste real confirmou
+o bootstrap do Session Manager e a execução JCC/DRDA, mas o runtime Informix não
+registrou a rotina e não produziu parada. A coleta estática x22 confirmou no
+provedor SPL do ODS 2.2.1.1 os pares `0:4` e `1:4`.
 
 ## Compilação e teste local
 
@@ -51,20 +51,12 @@ O levantamento x22 encontrou quatro provedores. O provedor específico de SPL,
 serializados pelo cliente como `0:4` e `1:4`. Os pares dos provedores Java,
 PL/SQL e SQL não são capacidades deste cliente e não devem ser anunciados.
 
-## Como descobrir o valor sem executar o ODS
+## Como o valor foi descoberto sem executar o ODS
 
-Os resultados x18/x20 existentes contêm chamadas para
-`RoutineService.getRoutineType(ArrayList)`, mas não o corpo desse método. Execute
-a nova coleta estática nos JARs preservados:
-
-```bash
-cd /home/informix/tmp/spl.debug
-bash /CAMINHO/DO/REPOSITORIO/bin/x21.sh
-```
-
-O script procura `RoutineService.class` em todos os JARs, coleta seu bytecode,
-classes candidatas e registros Eclipse, e tenta derivar os pares adicionados
-diretamente pelo método. Consulte o procedimento e os cuidados em
+Os resultados x18/x20 continham chamadas para
+`RoutineService.getRoutineType(ArrayList)`, mas não o corpo desse método. O
+coletor temporário x21 procurou `RoutineService.class` nos JARs preservados e
+mostrou a delegação aos provedores. Consulte a conclusão revisada em
 [`levantamentos/x21-supported-routines.md`](levantamentos/x21-supported-routines.md).
 
 O x21 mostrou que `RoutineService` apenas delega para implementações de
@@ -129,9 +121,13 @@ automático espera parada, envia Continue, espera conclusão e executa cleanup.
 PASS exige a sequência completa; timeout, erro remoto, configuração ausente ou
 cleanup incompleto retornam erro.
 
-Cada script da POC grava saída em `bin/outputs/`. Para a etapa atual, execute
-primeiro `test-x21.sh` e `x21.sh`. Commite o log `x21-self-test-*.log` e uma cópia
-revisada de `x21-summary.txt`. O arquivo `x21-private.tar.gz` só deve ser anexado
-à conversa se o resumo não resolver o par; nunca deve entrar no Git. Depois da
-resolução, execute e commite os logs `build-*.log`, `test-local-*.log` e
-`run-*.log`. Não envie novamente outputs já presentes no branch.
+Depois de aplicar `CLIENT DEBUGINFO`, o cliente emite `DEBUGINFO_APPLIED`. Se a
+chamada retornar sem o Session Manager reportar a conexão do runtime, o erro é
+`NO_DEBUG_RUNTIME_REGISTRATION`; se houver conexão mas nenhuma parada, o erro é
+`NO_DEBUG_STOP_EVENT`. `runtime.registration.grace.ms`, com padrão de 1000 ms,
+evita classificar como ausência um report recebido junto com o retorno da CALL.
+
+Cada script permanente da POC grava saída em `bin/outputs/`. Depois da execução,
+revise e commite quando útil os logs `build-*.log`, `test-local-*.log` e
+`run-*.log`. Coletores temporários `x*` e seus outputs são enviados apenas pela
+conversa e não entram no repositório.

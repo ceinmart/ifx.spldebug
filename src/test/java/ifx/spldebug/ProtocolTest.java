@@ -1,4 +1,4 @@
-/* v0.1.2 | 2026-09-14T19:49:58Z | Atualizado com auxílio de ChatGPT.
+/* v0.1.3 | 2026-09-15T14:10:00Z | Atualizado com auxílio de ChatGPT.
  * Testes locais com vetores sintéticos declarados. Não simulam validação Informix.
  */
 package ifx.spldebug;
@@ -79,6 +79,10 @@ public final class ProtocolTest {
             check(peer.get(4,TimeUnit.SECONDS),"loopback transport round-trip");
         }
         Properties p=new Properties(); p.setProperty("client.ip","127.0.0.1");
+        check(new Config(p).runtimeRegistrationGrace()==1000,"runtime registration grace default");
+        p.setProperty("runtime.registration.grace.ms","10001");
+        rejects(() -> new Config(p).runtimeRegistrationGrace(),"runtime registration grace limit");
+        p.remove("runtime.registration.grace.ms");
         try(Engine e=new Engine(new Config(p),event -> {})) {
             check(e.dispatch(new Commands.Request("catalog",Commands.Command.CAPABILITIES,Collections.emptyMap())).data.size()==Commands.Command.values().length,"capabilities completeness");
             for(Commands.Command c:Commands.Command.values()) if(c.status!=Commands.Status.IMPLEMENTED_EXPERIMENTAL) {

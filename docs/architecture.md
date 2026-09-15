@@ -1,11 +1,11 @@
 # Informix SPL Debugger — Arquitetura Técnica
 
-**Versão:** 1.4
+**Versão:** 1.5
 
-**Data:** 2026-09-14T19:49:58Z
+**Data:** 2026-09-15T14:10:00Z
 
 **Criado por:** ChatGPT / GPT-5.6 Sol  
-**Status:** código experimental v0.1.1; testes locais aprovados; integração Informix pendente
+**Status:** código experimental v0.1.1; bootstrap real aprovado; registro do runtime Informix pendente
 
 ## 1. Objetivo
 
@@ -542,9 +542,9 @@ invocação de Vim/Nano ou recompilação por consequência dessa funcionalidade
 
 ## 23. Pendências para validar ponta a ponta
 
-- Confirmar disponibilidade/versões do JCC e manager; o par SPL já foi resolvido.
-- Executar probe contra db2dbgm.jar; confirmar duração e comportamento das conexões.
-- Executar chamada de rotina de teste fornecida pelo mantenedor em banco com logging.
+- Confirmar versão exata do JCC e compatibilidade com a versão do Informix; o par SPL já foi resolvido.
+- Confirmar o endereço de retorno do servidor Informix até o Session Manager.
+- Identificar por que o runtime não registrou a rotina SPL no teste real.
 - Confirmar parada inicial por StepInto, formato/envelope dos reports, correlação,
   Run e limpeza. Parser recusa respostas incompatíveis explicitamente.
 - Conferir resultado e eventuais timeouts no encerramento, inclusive interrupção.
@@ -552,3 +552,18 @@ invocação de Vim/Nano ou recompilação por consequência dessa funcionalidade
 
 Os scripts e a evidência local ficam descritos em `poc-v0.1.1.md`; o catálogo
 completo do escopo conhecido do projeto fica em `commands.md` e `Commands.java`.
+
+## 24. Resultado real de 2026-09-15
+
+O teste com Informix confirmou `InitializeClient`, `Options`, conexão JCC/DRDA,
+aplicação de `CLIENT DEBUGINFO` sem exceção, execução da `CALL`, limpeza do
+atributo, rollback, fechamento JDBC e `TerminateClient`. A mesma chamada também
+foi validada por `dbaccess`.
+
+O log privado do Session Manager não contém `EnterRoutine`, identificação de
+rotina ou report de linha para essa execução. Isso localiza a falha entre a
+marcação da conexão e o registro do runtime Informix; não há evidência de que
+`StepInto` tenha sido simplesmente enviado tarde. A POC agora diferencia esse
+caso como `NO_DEBUG_RUNTIME_REGISTRATION` e emite `DEBUGINFO_APPLIED` após o JCC
+aceitar a marcação. Uma janela configurável curta permite ao polling consumir
+um registro que tenha chegado simultaneamente ao retorno da chamada.

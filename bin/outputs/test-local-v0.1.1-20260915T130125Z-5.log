@@ -1,0 +1,68 @@
+spldbg_version=0.1.1 mode=test-local utc=2026-09-15T13:01:25Z
+8b122ebef5d693d52f63ae1c30580ed37e746207
+worktree_dirty=yes
+d1e7d1823bcfdd90f5516d0aecc1d81dc7583c5ddfe801473e7f1887e3634144  src/main/java/ifx/spldebug/Commands.java
+170f1b5c6a1c7fc03cc0f61320f45f02828e2b23ef28a65776424a9381acb9da  src/main/java/ifx/spldebug/Config.java
+0ae950b182c84fded37f6cf8f0d55cecd1399d07d970e99e2b7d0a597382ba7b  src/main/java/ifx/spldebug/Engine.java
+e2d8b04eeb189e0e4b936c72de17ec9625cf65278770c6b793e826222124f4af  src/main/java/ifx/spldebug/Main.java
+02b1c94756a3219a7b0034b5a4bdc80db04ffd88af120188575fb68684ca2c9e  src/main/java/ifx/spldebug/Psmd.java
+de4b6f3457d4d62c7122784b3dc9cf3e2f6d7c66adebda03df604f9379e8d180  src/main/java/ifx/spldebug/SupportedTypes.java
+9263ddfff8be2a3a1de57e9572ad1333920c2e6155ede5413b39543deeec374b  src/main/java/ifx/spldebug/SupportedTypesDiscovery.java
+faf1e6fe3565fa39783e84b0b15aa872ba6449a25945e3eae3466c3ed8b88695  src/test/java/ifx/spldebug/ProtocolTest.java
+spldbg_version=0.1.1 mode=build utc=2026-09-15T13:01:25Z
+8b122ebef5d693d52f63ae1c30580ed37e746207
+worktree_dirty=yes
+d1e7d1823bcfdd90f5516d0aecc1d81dc7583c5ddfe801473e7f1887e3634144  src/main/java/ifx/spldebug/Commands.java
+170f1b5c6a1c7fc03cc0f61320f45f02828e2b23ef28a65776424a9381acb9da  src/main/java/ifx/spldebug/Config.java
+0ae950b182c84fded37f6cf8f0d55cecd1399d07d970e99e2b7d0a597382ba7b  src/main/java/ifx/spldebug/Engine.java
+e2d8b04eeb189e0e4b936c72de17ec9625cf65278770c6b793e826222124f4af  src/main/java/ifx/spldebug/Main.java
+02b1c94756a3219a7b0034b5a4bdc80db04ffd88af120188575fb68684ca2c9e  src/main/java/ifx/spldebug/Psmd.java
+de4b6f3457d4d62c7122784b3dc9cf3e2f6d7c66adebda03df604f9379e8d180  src/main/java/ifx/spldebug/SupportedTypes.java
+9263ddfff8be2a3a1de57e9572ad1333920c2e6155ede5413b39543deeec374b  src/main/java/ifx/spldebug/SupportedTypesDiscovery.java
+faf1e6fe3565fa39783e84b0b15aa872ba6449a25945e3eae3466c3ed8b88695  src/test/java/ifx/spldebug/ProtocolTest.java
+openjdk version "17.0.20" 2026-07-21
+OpenJDK Runtime Environment (build 17.0.20+8-1-24.04-Ubuntu)
+OpenJDK 64-Bit Server VM (build 17.0.20+8-1-24.04-Ubuntu, mixed mode, sharing)
+javac 17.0.20
+PASS BUILD
+exit_code=0 log_exit_code=0
+Output: /workspace/scratch/c78a65267bd4/ifx.spldebug/bin/outputs/build-v0.1.1-20260915T130125Z-18.log
+PASS LOCAL_PROTOCOL checks=55; Informix/JCC não executados
+command	status	parameters
+CAPABILITIES	IMPLEMENTED_EXPERIMENTAL	-
+STATUS	IMPLEMENTED_EXPERIMENTAL	-
+INITIALIZE	IMPLEMENTED_EXPERIMENTAL	config
+EXECUTE	IMPLEMENTED_EXPERIMENTAL	call
+CONTINUE	IMPLEMENTED_EXPERIMENTAL	-
+DISCONNECT	IMPLEMENTED_EXPERIMENTAL	-
+PAUSE	PENDING	connectionID
+STEP_INTO	PENDING	connectionID
+STEP_OVER	PENDING	connectionID
+STEP_RETURN	PENDING	connectionID
+STEP_OUT	CONTRACT_UNKNOWN	connectionID
+RUN_TO_LINE	PENDING	connectionID,routineID,line
+END	CONTRACT_UNKNOWN	connectionID
+TERMINATE	PENDING	connectionID
+BREAKPOINT_ADD_LINE	PENDING	routineID,line,enabled,hitMode,hitCount
+BREAKPOINT_ADD_VARIABLE	PENDING	routineID,variable,condition,hitMode,hitCount
+BREAKPOINT_REMOVE	PENDING	routineID,breakpointID
+BREAKPOINT_REMOVE_ALL	PENDING	routineID
+BREAKPOINT_ENABLE	PENDING	routineID,breakpointID
+BREAKPOINT_DISABLE	PENDING	routineID,breakpointID
+BREAKPOINT_LIST	PENDING	routineID
+STACK	PENDING	connectionID
+FRAME_SELECT	PENDING	frameID
+VARIABLES	PENDING	frameID
+VARIABLE_GET	PENDING	frameID,variableID
+VARIABLE_SET	PENDING	frameID,variableID,value,type
+VARIABLE_SET_LENGTH	PENDING	variableID,length
+SOURCE_GET	PENDING	routineID,origin,path
+SOURCE_MAP	CONTRACT_UNKNOWN	routineID
+ROUTINES	PENDING	connectionID
+ROUTINE_ADD	CONTRACT_UNKNOWN	routineID,options
+OPTIONS	PENDING	sessionTimeout,maxVarReportSize
+TRACE	CONTRACT_UNKNOWN	scope,mode
+TRACE_MODE	CONTRACT_UNKNOWN	LineByLine,Variables,Statements,Timings
+MANAGER_PING	PENDING	-
+MANAGER_END	PENDING	-
+exit_code=0 log_exit_code=0

@@ -1,7 +1,7 @@
 <!--
-Versão: v1.1.0
+Versão: v1.2.0
 Criado em: 2026-09-14T18:51:29Z
-Atualizado em: 2026-09-14T19:49:58Z
+Atualizado em: 2026-09-15T14:10:00Z
 Criado por: Codex (ChatGPT)
 Projeto: ifx.spldebug
 Finalidade: documentar a coleta das implementações de IRoutineService.
@@ -18,31 +18,12 @@ tipos diretamente. Ele obtém todos os serviços registrados por
 Por isso o resultado vazio do x21 é correto: os números pertencem aos provedores,
 não à classe central.
 
-## Autoteste
+## Execução histórica
 
-```bash
-cd ~/ifx.spldebug
-bash bin/test-x22.sh
-```
-
-O resultado esperado é `PASS X22_SELF_TEST`. O teste usa provedores sintéticos
-SPL e SQL e confirma que somente os pares do provedor SPL chegam à propriedade.
-
-A versão v1.0.2 corrige a publicação truncada da v1.0.1. Antes da execução sobre
-os JARs reais, `bash -n bin/x22.sh bin/test-x22.sh` deve terminar sem mensagens.
-
-## Executar sobre o ODS preservado
-
-O diretório `x21` da coleta anterior precisa continuar disponível:
-
-```bash
-cd /home/informix/tmp/spl.debug
-
-bash ~/ifx.spldebug/bin/x22.sh \
-  --ods-root /home/informix/tmp/spl.debug/ods-2.2.1.1 \
-  --x21-output /home/informix/tmp/spl.debug/x21 \
-  --output /home/informix/tmp/spl.debug/x22
-```
+O x22 foi um coletor temporário com autoteste sintético. Conforme a política
+atual, scripts `x*` e seus outputs são trocados pela conversa e não permanecem
+no repositório. Esta página conserva a metodologia e o resultado revisado da
+coleta já concluída sobre a cópia preservada do ODS.
 
 O x22:
 
@@ -74,7 +55,7 @@ Os valores foram obtidos dos JARs do ODS 2.2.1.1. Não foram deduzidos de
 
 ## Resultados
 
-- `x22/x22-summary.txt`: resumo sanitizado com JAR, classe provedora e associação de cada par, apropriado para revisão;
+- `x22/x22-summary.txt`: resumo sanitizado enviado pela conversa;
 - `x22-private.tar.gz`: bytecode e índices completos, fora do Git.
 
 Na versão v1.1.0, `routine_service_pairs` mantém todos os pares encontrados para
@@ -84,4 +65,4 @@ auditoria, `spl_routine_service_pairs` contém apenas os pares do provedor SPL e
 Se continuar sem resolução, enviar em ordem alfabética:
 
 - `x22-private.tar.gz` — anexar à conversa, nunca commitar;
-- `x22-summary.txt` — pode ser copiado para `bin/outputs/` após revisão.
+- `x22-summary.txt` — enviar pela conversa.

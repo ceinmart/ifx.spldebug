@@ -1,4 +1,4 @@
-# v0.1.2-config | 2026-09-14T19:49:58Z | Atualizado com auxílio de ChatGPT.
+# v0.1.3-config | 2026-09-15T14:10:00Z | Atualizado com auxílio de ChatGPT.
 # Copiar para config/local.properties e preencher com dados reais.
 # Caminhos relativos são resolvidos a partir do diretório atual de execução.
 sm.host=
@@ -9,6 +9,9 @@ client.ip=
 # Não adicionar os pares dos provedores Java, PL/SQL ou SQL.
 psmd.supported.types=0:4,1:4
 socket.timeout.ms=10000
+# Janela curta para o polling consumir o registro do runtime quando a CALL retorna.
+# Não corrige uma rotina que não entrou em modo debug; apenas evita falso diagnóstico por corrida local.
+runtime.registration.grace.ms=1000
 run.timeout.seconds=60
 # URL real JCC/DRDA, usuário e arquivo com UMA chamada de rotina de teste existente.
 # Não colocar senha/propriedades de credencial na URL; usar SPLDBG_PASSWORD.

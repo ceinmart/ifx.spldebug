@@ -1,4 +1,4 @@
-/* v0.1.1 | 2026-09-11T19:30:37Z | Criado com auxílio de ChatGPT.
+/* v0.1.2 | 2026-09-15T14:10:00Z | Atualizado com auxílio de ChatGPT.
  * Núcleo sem terminal: executa JDBC em worker próprio e recebe reports em outro.
  * API interna estruturada para console, futura ponte Python e futuro DAP.
  */
@@ -24,6 +24,7 @@ public final class Engine implements AutoCloseable {
     private volatile boolean closing, registered, sawStop, continued;
     private volatile boolean connectionSeen, entryRequested;
     private volatile String routineID="", line="", failure="";
+    private final CountDownLatch runtimeRegistered=new CountDownLatch(1);
     private Connection connection;
     private Future<?> execution, poll;
 
@@ -115,6 +116,7 @@ public final class Engine implements AutoCloseable {
                 connection.setAutoCommit(false);
                 marked=true;
                 setDebugInfo(connection,debugInfo());
+                emit("DEBUGINFO_APPLIED");
                 if(closing||state==State.FAILED) throw new IllegalStateException("EXECUTION_CANCELLED");
                 emit("CALL_STARTED");
                 try(Statement statement=connection.createStatement()) {
@@ -126,7 +128,13 @@ public final class Engine implements AutoCloseable {
                         result=statement.getMoreResults(Statement.CLOSE_CURRENT_RESULT);
                     }
                 }
-                if(!closing&&state!=State.FAILED) { state=State.COMPLETED; emit("CALL_COMPLETED"); }
+                if(!closing&&state!=State.FAILED) {
+                    if(!connectionSeen&&config.runtimeRegistrationGrace()>0)
+                        runtimeRegistered.await(config.runtimeRegistrationGrace(),TimeUnit.MILLISECONDS);
+                    if(!connectionSeen) fail(new IOException("NO_DEBUG_RUNTIME_REGISTRATION"));
+                    else if(!sawStop) fail(new IOException("NO_DEBUG_STOP_EVENT"));
+                    else { state=State.COMPLETED; emit("CALL_COMPLETED"); }
+                }
             } catch(Exception e) { if(!closing) fail(e); }
             finally {
                 if(connection!=null) {
@@ -155,7 +163,7 @@ public final class Engine implements AutoCloseable {
         String name=element.getTagName();
         if(element.hasAttribute("clientID")&&!element.getAttribute("clientID").equals(clientID)) throw new IOException("REPORT_CLIENT_MISMATCH");
         if(!c.isEmpty()&&!c.equals(connectionID)) throw new IOException("REPORT_CONNECTION_MISMATCH");
-        if(c.equals(connectionID)) connectionSeen=true;
+        if(c.equals(connectionID)) { connectionSeen=true; runtimeRegistered.countDown(); }
         if(name.equals("Failure")) throw new IOException("PSMD_REPORT_FAILURE");
         if(name.equals("AtException")) throw new IOException("PSMD_AT_EXCEPTION");
         if(name.equals("AtLine")||name.equals("AtBreakPt")||name.equals("AtBreak")) {
