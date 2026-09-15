@@ -1,4 +1,4 @@
-/* v0.1.2 | 2026-09-15T14:10:00Z | Atualizado com auxílio de ChatGPT.
+/* v0.1.3 | 2026-09-15T17:27:25Z | Atualizado com auxílio de ChatGPT.
  * Configuração externa. Nenhuma credencial ou SQL é impresso automaticamente.
  */
 package ifx.spldebug;
@@ -27,6 +27,8 @@ public final class Config {
     }
     public int timeout() { return number("socket.timeout.ms",10000,3000,60000); }
     public int runtimeRegistrationGrace() { return number("runtime.registration.grace.ms",1000,0,10000); }
+    // O runtime Informix observado trata L como chave de trace; limitar a 0/1 na POC.
+    public int debugTraceLevel() { return number("debug.trace.level",0,0,1); }
     public String call() throws IOException {
         String sql=new String(Files.readAllBytes(Paths.get(required("call.file"))),StandardCharsets.UTF_8).trim();
         if(sql.endsWith(";")) sql=sql.substring(0,sql.length()-1).trim();
@@ -36,7 +38,7 @@ public final class Config {
     }
     public void validate() {
         required("sm.host"); number("sm.port",4554,1,65535); timeout();
-        runtimeRegistrationGrace();
+        runtimeRegistrationGrace(); debugTraceLevel();
         number("run.timeout.seconds",60,1,3600);
         String ip=required("client.ip");
         if(!ip.matches("[0-9]{1,3}(\\.[0-9]{1,3}){3}")) throw new IllegalArgumentException("CLIENT_IPV4_REQUIRED");
