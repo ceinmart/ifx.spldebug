@@ -1,8 +1,8 @@
 # AGENTS.md
 
-**Versão:** 1.4
+**Versão:** 1.5
 
-**Data:** 2026-09-14T19:49:58Z
+**Data:** 2026-09-15T14:10:00Z
 
 **Criado por:** ChatGPT / GPT-5.6 Sol
 
@@ -18,6 +18,7 @@ Regras para qualquer agente ou assistente que trabalhe neste repositório.
 - Fonte SPL é somente para consulta e indicação de execução: não criar funções de edição, compilação ou alteração da rotina por causa da interface de fonte.
 - Toda versão deve incluir scripts de compilação e teste básico. Scripts públicos têm versão no nome; classes Java conservam nomes estáveis e versão no cabeçalho.
 - `bin/outputs/` guarda resultados versionáveis; ler outputs novos do mantenedor antes de repetir coletas. Não confundir testes locais com integração Informix.
+- Scripts temporários de coleta `x*` e seus outputs não entram no repositório. Fornecer o conteúdo do coletor na conversa e receber o resultado também pela conversa; consolidar no Git apenas conclusões técnicas revisadas e não proprietárias.
 - O levantamento histórico foi recuperado de anexos em 2026-09-11. As conclusões reproduzíveis ficam na arquitetura; dumps originais não devem entrar no Git.
 - Se faltar evidência, procurar primeiro nos levantamentos e histórico/anexos acessíveis. Só pedir reenvio quando realmente não estiver disponível.
 - `psmd.supported.types=0:4,1:4` foi confirmado no bytecode do `SPLRoutineService` do ODS 2.2.1.1 pela coleta x22. Não adicionar pares dos provedores Java, PL/SQL ou SQL e nunca deduzir valores de `T789`.

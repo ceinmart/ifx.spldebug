@@ -1,4 +1,4 @@
-/* v0.1.1 | 2026-09-11T19:30:37Z | Criado com auxílio de ChatGPT.
+/* v0.1.2 | 2026-09-15T14:10:00Z | Atualizado com auxílio de ChatGPT.
  * Console mínimo; a renderização fica aqui e não no motor de depuração.
  */
 package ifx.spldebug;
@@ -76,7 +76,8 @@ public final class Main {
     }
     static void catalog() {
         System.out.println("command\tstatus\tparameters");
-        for(Command c:Command.values()) System.out.println(c+"\t"+c.status+"\t"+c.parameters);
+        for(Command c:Command.values())
+            System.out.println(c+"\t"+c.status+"\t"+(c.parameters.isEmpty()?"-":c.parameters));
     }
     private static String safe(String s) { return s.replaceAll("[^A-Za-z0-9_.:=/-]","?"); }
     private static synchronized void printEvent(Event e) {

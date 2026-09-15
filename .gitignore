@@ -1,4 +1,4 @@
-# v0.1.2 | 2026-09-13T19:22:10Z | Atualizado com auxílio de ChatGPT.
+# v0.1.3 | 2026-09-15T14:10:00Z | Atualizado com auxílio de ChatGPT.
 /bin/classes/
 *.class
 *.jar
@@ -9,4 +9,8 @@
 /bin/outputs/*-private.tar.gz
 /x21-private.tar.gz
 /x22-private.tar.gz
+# Coletores temporários x* e seus resultados são trocados somente pela conversa.
+/bin/x[0-9]*.sh
+/bin/test-x[0-9]*.sh
+/bin/outputs/x[0-9]*
 # bin/outputs/*.log é intencionalmente versionável.
